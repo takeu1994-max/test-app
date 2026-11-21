@@ -43,3 +43,7 @@
   - P1（請求書・見積書テンプレート）は紹介文と特徴を表示。URLが空のあいだは「BOOTHで近日販売予定です」と表示
   - P2・P3 は `available: false` のため案内枠を非表示（準備ができたら `true` にする）
 - ページを追加したら `sitemap.xml` にも追記する
+
+## 解説記事（`guides/`）
+- `guides/gensen-invoice.html` → `/guides/gensen-invoice`「はじめてでも分かる 源泉徴収と請求書の書き方」
+- 記事を追加するときは、同じフォルダにHTMLを作り、`sitemap.xml` に追記し、ツール一覧・申告チェッカーの「関連情報・おすすめ」に `<a class="slot">` を1枚足す（コメントにひな形あり。PR枠は「PR」表記と `rel="sponsored noopener"` 必須）

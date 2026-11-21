@@ -164,7 +164,7 @@
   /* 関連情報（収益化用プレースホルダー） */
   .promo { max-width: 1040px; margin: 16px auto 0; }
   .promo .grid { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr); margin-top: 10px; }
-  @media (min-width: 640px) { .promo .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (min-width: 640px) { .promo .grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); } }
   .promo a.slot {
     display: block; border: 1.5px dashed var(--line); border-radius: 14px; padding: 14px; text-decoration: none; color: var(--text); min-height: 44px;
   }
@@ -236,28 +236,26 @@
   </main>
 </div>
 
-<!-- ===== 関連情報・おすすめ案内エリア（プレースホルダー） =====
-     各 <a class="slot"> の href・タイトル・説明を差し替えて使ってください。
-     アフィリエイトリンクの場合は rel="sponsored noopener" と「PR」表記を付けてください。 -->
+<!-- ===== 関連情報・おすすめ =====
+     カードは .grid の中に <a class="slot"> を足すだけで増やせます。 -->
 <section class="promo card" aria-labelledby="promoTitle">
   <h2 id="promoTitle">関連情報・おすすめ</h2>
-  <p class="lead" style="margin-bottom:0">準備に役立つ解説記事やサービスの案内（準備中）</p>
+  <p class="lead" style="margin-bottom:0">準備に役立つ解説記事とツール</p>
   <div class="grid">
-    <a class="slot" href="#" data-slot="1" rel="noopener">
-      <span class="tag">解説記事</span>
-      <b>（準備中）副業・フリーランスの確定申告 準備ガイド</b>
-      <span class="d">記事URLに差し替え予定</span>
-    </a>
-    <a class="slot" href="#" data-slot="2" rel="noopener">
-      <span class="tag">PR枠</span>
-      <b>（準備中）会計ソフトの案内</b>
-      <span class="d">アフィリエイトリンクに差し替え予定</span>
-    </a>
-    <a class="slot" href="/" data-slot="3">
+    <a class="slot" href="/guides/gensen-invoice" data-slot="1">
+        <span class="tag">解説記事</span>
+        <b>はじめてでも分かる 源泉徴収と請求書の書き方</b>
+        <span class="d">源泉徴収のしくみと計算の考え方を解説。差し引かれた金額の確認にも役立ちます。</span>
+      </a>
+    <a class="slot" href="/" data-slot="2">
       <span class="tag">姉妹ツール</span>
       <b>源泉徴収・請求額 逆算電卓</b>
       <span class="d">報酬から源泉徴収税・振込額を計算</span>
     </a>
+    <!-- ▼ 追加用の枠（記事やPRを載せるときは、下のコメントを外して href と文言を書き換えてください）
+         ・解説記事： <a class="slot" href="/guides/（記事のURL）"><span class="tag">解説記事</span><b>タイトル</b><span class="d">ひとこと説明</span></a>
+         ・PR枠（アフィリエイト）： <a class="slot" href="https://（リンク先）" target="_blank" rel="sponsored noopener"><span class="tag">PR</span><b>サービス名</b><span class="d">ひとこと説明</span></a>
+         ※PR枠には必ず「PR」表記と rel="sponsored noopener" を付けてください。 -->
   </div>
 </section>
 

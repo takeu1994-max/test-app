@@ -101,7 +101,7 @@
   .guide h2 { color: var(--text); margin-bottom: 2px; }
   .guide .lead { color: var(--sub); font-size: .82rem; }
   .guide .grid { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr); margin-top: 12px; }
-  @media (min-width: 640px) { .guide .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (min-width: 640px) { .guide .grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); } }
   .guide a.slot {
     display: block; min-height: 44px; border: 1.5px dashed var(--line); border-radius: 14px; padding: 14px;
     text-decoration: none; color: var(--text);
@@ -217,29 +217,21 @@
 
     <aside class="promo-box" data-product="p1" data-lead="フリーランス・個人事業主向けの請求書・見積書テンプレートです。薄い黄色のセルに入力するだけで、消費税・源泉徴収・差引の請求金額を自動で計算します。"></aside>
 
-    <!-- ===== 案内エリア（プレースホルダー） =====
-         各 <a class="slot"> の href・タイトル・説明を差し替えて使ってください。
-         アフィリエイトリンクの場合は rel="sponsored noopener" と「PR」表記を付けてください。
-         使わない枠は <a> ごと削除してOKです。 -->
+    <!-- ===== 関連情報・おすすめ =====
+         カードは .grid の中に <a class="slot"> を足すだけで増やせます（1枚なら横いっぱい、2〜3枚なら横並び）。 -->
     <section class="guide" aria-labelledby="guideTitle">
       <h2 id="guideTitle">関連情報・おすすめ</h2>
-      <p class="lead">ツールと合わせて読みたい、やさしい解説やサービスの案内（準備中）</p>
+      <p class="lead">ツールとあわせて読みたい、やさしい解説記事です。</p>
       <div class="grid">
-        <a class="slot" href="#" data-slot="hub-1" rel="noopener">
+        <a class="slot" href="/guides/gensen-invoice" data-slot="hub-1">
           <span class="tag">解説記事</span>
-          <b>（準備中）はじめてでも分かる 源泉徴収と請求書の書き方</b>
-          <span class="d">記事URLに差し替え予定</span>
+          <b>はじめてでも分かる 源泉徴収と請求書の書き方</b>
+          <span class="d">請求書に書く基本項目と、源泉徴収の計算・税抜／税込・交通費の扱いを、はじめての方向けにまとめました。</span>
         </a>
-        <a class="slot" href="#" data-slot="hub-2" rel="noopener">
-          <span class="tag">解説記事</span>
-          <b>（準備中）副業・フリーランスの確定申告 準備ガイド</b>
-          <span class="d">記事URLに差し替え予定</span>
-        </a>
-        <a class="slot" href="#" data-slot="hub-3" rel="noopener">
-          <span class="tag">PR枠</span>
-          <b>（準備中）会計ソフト・サービスの案内</b>
-          <span class="d">アフィリエイトリンクに差し替え予定</span>
-        </a>
+        <!-- ▼ 追加用の枠（記事やPRを載せるときは、下のコメントを外して href と文言を書き換えてください）
+             ・解説記事： <a class="slot" href="/guides/（記事のURL）"><span class="tag">解説記事</span><b>タイトル</b><span class="d">ひとこと説明</span></a>
+             ・PR枠（アフィリエイト）： <a class="slot" href="https://（リンク先）" target="_blank" rel="sponsored noopener"><span class="tag">PR</span><b>サービス名</b><span class="d">ひとこと説明</span></a>
+             ※PR枠には必ず「PR」表記と rel="sponsored noopener" を付けてください。 -->
       </div>
     </section>
   </main>
