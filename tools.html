@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0f766e">
-<meta name="description" content="フリーランス・副業の方向けの小さな無料ツール集。請求額の逆算や、確定申告の準備チェックなど。登録不要・入力内容は外部に送信しません。">
-<title>フリーランス・副業 お役立ちツール</title>
+<meta name="description" content="フリーランス・副業・経理初心者の方向けの無料ツール集。請求額の計算、請求書の書き忘れチェック、収入の振り返り、確定申告の準備チェックをスマホでかんたんに。登録不要・入力内容は外部に送信しません。">
+<title>請求・確定申告のかんたんツール</title>
 <style>
   :root {
     --bg: #f3f5f4;
@@ -38,12 +38,16 @@
   }
   .page { max-width: 880px; margin: 0 auto; }
   header { margin-bottom: 20px; }
-  h1 { font-size: 1.45rem; letter-spacing: .02em; }
+  .eyebrow { display: inline-block; font-size: .8rem; font-weight: 700; color: var(--accent); margin-bottom: 4px; }
+  h1 { font-size: 1.45rem; letter-spacing: .02em; line-height: 1.4; }
+  .nw { display: inline-block; } /* 語の途中で改行しない */
   header p { color: var(--sub); font-size: .9rem; margin-top: 4px; }
   .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; list-style: none; }
   .badges li { font-size: .75rem; font-weight: 700; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 3px 10px; }
   h2 { font-size: 1rem; color: var(--sub); margin: 0 0 10px; }
   .tool-group + .tool-group { margin-top: 24px; }
+  .tool-group h2 { margin-bottom: 2px; }
+  .group-lead { color: var(--sub); font-size: .82rem; margin-bottom: 10px; }
 
   /* ツールカード：.tool-list に <li> を足すだけで増やせます */
   .tool-list { list-style: none; display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
@@ -101,12 +105,14 @@
 <body>
 <div class="page">
   <header>
-    <h1>フリーランス・副業 お役立ちツール</h1>
-    <p>請求や確定申告まわりの「ちょっと面倒」を片づける、小さな無料ツール集です。</p>
+    <span class="eyebrow">フリーランス・副業・経理初心者の方へ</span>
+    <h1><span class="nw">請求・確定申告の</span><span class="nw">かんたんツール</span></h1>
+    <p>請求書づくりから確定申告の準備まで、「これで合ってるかな？」をサッと確かめられる無料ツール集です。むずかしい知識がなくても、画面の案内に沿ってタップ・入力するだけで使えます。</p>
     <ul class="badges">
-      <li>登録不要</li>
+      <li>無料・登録不要</li>
+      <li>はじめてでも使いやすい</li>
       <li>入力内容は外部に送信しません</li>
-      <li>スマホ・iPad対応</li>
+      <li>スマホ・iPadでサッと使える</li>
     </ul>
   </header>
 
@@ -120,19 +126,20 @@
         <div class="topbar"><a class="back" href="./tools.html">← ツール一覧へ</a></div>
     -->
     <section class="tool-group" aria-labelledby="g-billing">
-      <h2 id="g-billing">請求・報酬まわり</h2>
+      <h2 id="g-billing">毎月の請求・報酬</h2>
+      <p class="group-lead">請求書をつくるとき・送る前に</p>
       <ul class="tool-list">
       <li>
         <a class="tool" href="./index.html">
           <span class="top">
             <span class="icon" aria-hidden="true">¥</span>
-            <span><span class="tag">請求書づくりに</span><span class="name">源泉徴収・請求額 逆算電卓</span></span>
+            <span><span class="tag">請求書をつくるときに</span><span class="name">源泉徴収・請求額 逆算電卓</span></span>
           </span>
-          <span class="desc">報酬額から、消費税・源泉徴収税を差し引いた振込額を計算。欲しい手取りから請求額の逆算もできます。</span>
+          <span class="desc">報酬の金額を入れると、消費税や源泉徴収（報酬から先に差し引かれる税金）を計算して、実際に振り込まれる金額が分かります。「手取りをいくらにしたいか」から請求額を逆算することもできます。</span>
           <ul class="points">
-            <li>報酬→手取り、手取り→報酬の両方向に計算</li>
-            <li>100万円超の源泉徴収税率・振込手数料に対応</li>
-            <li>内訳をコピーして請求書やメールに</li>
+            <li>源泉徴収の計算もおまかせ（100万円を超える分にも対応）</li>
+            <li>振込手数料を差し引いた金額も確認できる</li>
+            <li>内訳をコピーして、請求書やメールにそのまま使える</li>
           </ul>
           <span class="go"><span>電卓を開く</span></span>
         </a>
@@ -143,10 +150,10 @@
             <span class="icon" aria-hidden="true">書</span>
             <span><span class="tag">送る前の見直しに</span><span class="name">請求書 記載漏れチェッカー</span></span>
           </span>
-          <span class="desc">請求書・報酬の連絡・見積もりを送る前に、宛名や金額内訳、税の扱い、振込先などの記載漏れをタップで確認。</span>
+          <span class="desc">請求書や見積もりを送る前に、宛名・金額・振込先などの書き忘れがないか、リストをタップしながら確認できます。</span>
           <ul class="points">
-            <li>書類の種類・インボイス登録・源泉徴収に合わせて項目を表示</li>
-            <li>チェックの進み具合を表示、未確認をコピー</li>
+            <li>書類の種類を選ぶと、確認する項目を自動で整理</li>
+            <li>インボイスや源泉徴収がよく分からなくても「わからない」でOK</li>
             <li>「次の書類へ」で毎月くり返し使える</li>
           </ul>
           <span class="go"><span>チェックを始める</span></span>
@@ -156,7 +163,8 @@
     </section>
 
     <section class="tool-group" aria-labelledby="g-tax">
-      <h2 id="g-tax">確定申告まわり</h2>
+      <h2 id="g-tax">年に一度の確定申告</h2>
+      <p class="group-lead">1年のふり返りから、申告の準備まで</p>
       <ul class="tool-list">
       <li>
         <a class="tool" href="./income-memo.html">
@@ -164,11 +172,11 @@
             <span class="icon" aria-hidden="true">年</span>
             <span><span class="tag">1年の振り返りに</span><span class="name">年間収入 振り返りメモ</span></span>
           </span>
-          <span class="desc">月ごとの報酬と源泉徴収された額の目安をメモして、年間合計や月ごとの流れをざっくり確認。</span>
+          <span class="desc">毎月の報酬と、差し引かれた税金（源泉徴収）の金額をメモするだけ。1年の合計や、収入の多い月・少ない月がひと目で分かります。</span>
           <ul class="points">
-            <li>12か月分を入力するだけで合計・差引を表示</li>
-            <li>月ごとの報酬を棒グラフで確認</li>
-            <li>年ごとに記録、まとめをコピー</li>
+            <li>合計や平均は自動で計算</li>
+            <li>月ごとの流れを棒グラフで確認</li>
+            <li>年ごとに記録でき、まとめをコピーできる</li>
           </ul>
           <span class="go"><span>メモを開く</span></span>
         </a>
@@ -177,13 +185,13 @@
         <a class="tool" href="./checklist.html">
           <span class="top">
             <span class="icon" aria-hidden="true">✓</span>
-            <span><span class="tag">確定申告シーズンに</span><span class="name">確定申告 準備・抜け漏れチェッカー</span></span>
+            <span><span class="tag">確定申告の準備に</span><span class="name">確定申告 準備・抜け漏れチェッカー</span></span>
           </span>
-          <span class="desc">自分の状況をタップで選ぶだけで、そろえておきたい書類や確認事項をリストで整理。抜け漏れ防止に。</span>
+          <span class="desc">「確定申告って、何を用意すればいいの？」を整理するチェックリスト。自分の状況をタップで選ぶと、そろえておきたい書類や確認することが一覧になります。</span>
           <ul class="points">
-            <li>副業・フリーランスなど状況に合わせて項目を表示</li>
-            <li>タップで確認済みにして進み具合を表示</li>
-            <li>チェック内容はこの端末にだけ保存</li>
+            <li>会社員の副業・フリーランスなど、状況に合わせて表示</li>
+            <li>分からない所は「わからない」を選べば確認用の項目が出る</li>
+            <li>チェックした内容はこの端末にだけ保存</li>
           </ul>
           <span class="go"><span>チェックを始める</span></span>
         </a>
@@ -197,11 +205,11 @@
          使わない枠は <a> ごと削除してOKです。 -->
     <section class="guide" aria-labelledby="guideTitle">
       <h2 id="guideTitle">関連情報・おすすめ</h2>
-      <p class="lead">ツールと合わせて読みたい解説やサービスの案内（準備中）</p>
+      <p class="lead">ツールと合わせて読みたい、やさしい解説やサービスの案内（準備中）</p>
       <div class="grid">
         <a class="slot" href="#" data-slot="hub-1" rel="noopener">
           <span class="tag">解説記事</span>
-          <b>（準備中）源泉徴収のしくみと請求書の書き方</b>
+          <b>（準備中）はじめてでも分かる 源泉徴収と請求書の書き方</b>
           <span class="d">記事URLに差し替え予定</span>
         </a>
         <a class="slot" href="#" data-slot="hub-2" rel="noopener">
