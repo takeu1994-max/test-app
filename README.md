@@ -39,7 +39,8 @@
 - SEO：各ページに canonical・OGP（`og-image.png`）・アイコン（`favicon.ico` / `favicon.svg` / `apple-touch-icon.png`）。`sitemap.xml`・`robots.txt`
 - `about.html`：運営者情報・免責事項・プライバシーポリシー・お問い合わせ・国税庁リンク
 - `site.css`：使い方・FAQ、有料商品の案内枠、フッターリンクの共通スタイル
-- **`site.js`：販売ページのURLは先頭の `BOOTH_URL_P1`、お問い合わせフォームは `SITE.contactUrl` を書き換えれば全ページに反映**
+- **`site.js`：販売ページのURLは先頭の `BOOTH_URL_P1`、お問い合わせフォーム（Googleフォーム）は `SITE.contactUrl` を書き換えれば全ページに反映**
+  - お問い合わせ導線：サイト内の「お問い合わせ」リンクはすべて `/about#contact` に集約。フォームを開くボタンは `/about#contact` だけに表示（新しいタブ）
   - BOOTHのURLを使うのは `/templates` の購入ボタンだけ。ツール画面・記事・ツール一覧の小さな案内は `/templates#p1` へ移動する
   - URLが空のあいだは「近日販売予定」、入れると「BOOTHで販売中」＋購入ボタンに切り替わる
   - P2・P3 は `available: false`（準備ができたら `true`、`/templates` に商品セクションを追加）

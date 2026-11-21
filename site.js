@@ -15,7 +15,7 @@
 
   var SITE = {
     // お問い合わせフォーム（例：Googleフォーム）のURL
-    contactUrl: ""
+    contactUrl: "https://forms.gle/btRc3NdNJh2i4NE9A"
   };
 
   // available: false の商品は、案内を表示しません（準備ができたら true に）
@@ -91,18 +91,25 @@
     slot.appendChild(box);
   });
 
-  // ---------- お問い合わせ導線 ----------
-  // <span data-contact></span>
+  // ---------- お問い合わせ導線（/about#contact だけで使用） ----------
+  // <div data-contact></div> → Googleフォームを新しいタブで開くボタン
+  //   ・サイト内の「お問い合わせ」リンクは、すべて /about#contact（注意事項の説明つき）に集めています
   document.querySelectorAll("[data-contact]").forEach(function (slot) {
     slot.innerHTML = "";
     if (SITE.contactUrl) {
-      var a = el("a", "", "お問い合わせフォームを開く");
+      var a = el("a", "contact-btn");
       a.href = SITE.contactUrl;
       a.target = "_blank";
       a.rel = "noopener";
+      var main = el("span", "contact-main", "お問い合わせフォームを開く");
+      var icon = el("span", "contact-icon", "↗");
+      icon.setAttribute("aria-hidden", "true");
+      main.appendChild(icon);
+      a.appendChild(main);
+      a.appendChild(el("span", "contact-sub", "Googleフォーム（新しいタブで開きます）"));
       slot.appendChild(a);
     } else {
-      slot.appendChild(document.createTextNode("お問い合わせフォームは準備中です。公開までしばらくお待ちください。"));
+      slot.appendChild(el("p", "", "お問い合わせフォームは準備中です。公開までしばらくお待ちください。"));
     }
   });
 })();
