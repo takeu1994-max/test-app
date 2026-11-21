@@ -43,14 +43,13 @@
     min-height: 100vh;
     padding: 12px 16px calc(32px + env(safe-area-inset-bottom));
   }
-  /* ツール切替 */
-  .tools { max-width: 960px; margin: 0 auto 14px; display: flex; gap: 6px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 4px; }
-  .tools a {
-    flex: 1 1 0; min-width: 0; min-height: 44px; display: flex; align-items: center; justify-content: center;
-    border-radius: 10px; text-decoration: none; color: var(--sub); font-weight: 700; font-size: .88rem; text-align: center; padding: 4px 6px;
+  /* ツール一覧へ戻るリンク */
+  .back {
+    display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; margin: 0 0 4px -4px;
+    color: var(--sub); font-size: .85rem; font-weight: 700; text-decoration: none; border-radius: 8px;
   }
-  .tools a[aria-current="page"] { background: var(--accent-soft); color: var(--accent); }
-  @media (max-width: 380px) { .tools a { font-size: .8rem; } }
+  .back:hover, .back:focus-visible { color: var(--accent); }
+  .topbar { max-width: 960px; margin: 0 auto; }
   header { max-width: 960px; margin: 0 auto 16px; }
   h1 { font-size: 1.3rem; letter-spacing: .02em; }
   header p { color: var(--sub); font-size: .88rem; margin-top: 2px; }
@@ -173,10 +172,7 @@
 </style>
 </head>
 <body>
-<nav class="tools" aria-label="ツール切替">
-  <a href="./index.html" aria-current="page" title="源泉徴収・請求額 逆算電卓">請求額 逆算電卓</a>
-  <a href="./checklist.html" title="確定申告 準備・抜け漏れチェッカー">申告準備チェック</a>
-</nav>
+<div class="topbar"><a class="back" href="./tools.html">← ツール一覧へ</a></div>
 <header>
   <h1>源泉徴収・請求額 逆算電卓</h1>
   <p>フリーランス・個人事業主の請求書づくりに。消費税・源泉徴収税・振込額を一発計算。</p>

@@ -46,13 +46,13 @@
   }
   a { color: var(--accent); }
 
-  /* ツール切替 */
-  .tools { max-width: 1040px; margin: 0 auto 14px; display: flex; gap: 6px; background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 4px; }
-  .tools a {
-    flex: 1 1 0; min-width: 0; min-height: 44px; display: flex; align-items: center; justify-content: center;
-    border-radius: 10px; text-decoration: none; color: var(--sub); font-weight: 700; font-size: .88rem; text-align: center; padding: 4px 6px;
+  /* ツール一覧へ戻るリンク */
+  .back {
+    display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; margin: 0 0 4px -4px;
+    color: var(--sub); font-size: .85rem; font-weight: 700; text-decoration: none; border-radius: 8px;
   }
-  .tools a[aria-current="page"] { background: var(--accent-soft); color: var(--accent); }
+  .back:hover, .back:focus-visible { color: var(--accent); }
+  .topbar { max-width: 1040px; margin: 0 auto; }
 
   header { max-width: 1040px; margin: 0 auto 14px; }
   h1 { font-size: 1.3rem; letter-spacing: .02em; }
@@ -171,15 +171,11 @@
     body { padding-left: 12px; padding-right: 12px; }
     .card { padding: 14px; }
     .chips button { font-size: .85rem; padding: 6px 10px; }
-    .tools a { font-size: .8rem; }
   }
 </style>
 </head>
 <body>
-<nav class="tools" aria-label="ツール切替">
-  <a href="./index.html" title="源泉徴収・請求額 逆算電卓">請求額 逆算電卓</a>
-  <a href="./checklist.html" aria-current="page" title="確定申告 準備・抜け漏れチェッカー">申告準備チェック</a>
-</nav>
+<div class="topbar"><a class="back" href="./tools.html">← ツール一覧へ</a></div>
 
 <header>
   <h1>確定申告 準備・抜け漏れチェッカー</h1>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<meta name="description" content="フリーランス・副業の方向けの小さな無料ツール集。請求額の逆算や、確定申告の準備チェックなど。登録不要・入力内容は外部に送信しません。">
+<title>フリーランス・副業 お役立ちツール</title>
+<style>
+  :root {
+    --bg: #f3f5f4;
+    --card: #ffffff;
+    --text: #18201e;
+    --sub: #5b6664;
+    --line: #dfe5e3;
+    --accent: #0f766e;
+    --accent-soft: #e3f3f1;
+    --shadow: 0 1px 2px rgba(0,0,0,.05), 0 4px 16px rgba(0,0,0,.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1312;
+      --card: #18201e;
+      --text: #eef3f2;
+      --sub: #9aa8a5;
+      --line: #2a3533;
+      --accent: #2dd4bf;
+      --accent-soft: #123532;
+      --shadow: none;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.6; min-height: 100vh;
+    padding: 28px 16px calc(32px + env(safe-area-inset-bottom));
+  }
+  .page { max-width: 880px; margin: 0 auto; }
+  header { margin-bottom: 20px; }
+  h1 { font-size: 1.45rem; letter-spacing: .02em; }
+  header p { color: var(--sub); font-size: .9rem; margin-top: 4px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; list-style: none; }
+  .badges li { font-size: .75rem; font-weight: 700; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 3px 10px; }
+  h2 { font-size: 1rem; color: var(--sub); margin: 0 0 10px; }
+
+  /* ツールカード：.tool-list に <li> を足すだけで増やせます */
+  .tool-list { list-style: none; display: grid; gap: 12px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 640px) { .tool-list { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  .tool {
+    display: flex; flex-direction: column; height: 100%; min-height: 44px;
+    background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px;
+    box-shadow: var(--shadow); text-decoration: none; color: var(--text); touch-action: manipulation;
+    transition: border-color .15s, transform .1s;
+  }
+  .tool:hover { border-color: var(--accent); }
+  .tool:active { transform: scale(.985); }
+  .tool:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .tool .top { display: flex; align-items: center; gap: 12px; }
+  .tool .icon {
+    flex: 0 0 48px; height: 48px; border-radius: 14px; background: var(--accent-soft); color: var(--accent);
+    display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 800;
+  }
+  .tool .tag { display: block; font-size: .72rem; font-weight: 700; color: var(--sub); }
+  .tool .name { display: block; font-size: 1.08rem; font-weight: 800; line-height: 1.35; }
+  .tool .desc { color: var(--sub); font-size: .88rem; margin-top: 10px; }
+  .tool .points { list-style: none; margin-top: 10px; display: grid; gap: 4px; font-size: .84rem; }
+  .tool .points li::before { content: "・"; color: var(--accent); font-weight: 800; }
+  .tool .go {
+    margin-top: auto; padding-top: 14px; display: flex; align-items: center; justify-content: center;
+  }
+  .tool .go span {
+    width: 100%; min-height: 48px; border-radius: 12px; background: var(--accent); color: #fff;
+    display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: .95rem;
+  }
+  @media (prefers-color-scheme: dark) { .tool .go span { color: #0e1312; } }
+
+  /* 案内エリア（プレースホルダー） */
+  .guide { margin-top: 28px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; box-shadow: var(--shadow); }
+  .guide h2 { color: var(--text); margin-bottom: 2px; }
+  .guide .lead { color: var(--sub); font-size: .82rem; }
+  .guide .grid { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr); margin-top: 12px; }
+  @media (min-width: 640px) { .guide .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  .guide a.slot {
+    display: block; min-height: 44px; border: 1.5px dashed var(--line); border-radius: 14px; padding: 14px;
+    text-decoration: none; color: var(--text);
+  }
+  .guide a.slot .tag { display: inline-block; font-size: .7rem; font-weight: 700; color: var(--sub); background: var(--bg); border-radius: 6px; padding: 1px 6px; margin-bottom: 6px; }
+  .guide a.slot b { display: block; font-size: .92rem; }
+  .guide a.slot span.d { display: block; color: var(--sub); font-size: .8rem; margin-top: 2px; }
+
+  footer { margin-top: 22px; color: var(--sub); font-size: .76rem; line-height: 1.7; }
+  footer li { margin-left: 1.2em; }
+  @media (max-width: 380px) {
+    body { padding-left: 12px; padding-right: 12px; }
+    .tool, .guide { padding: 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <h1>フリーランス・副業 お役立ちツール</h1>
+    <p>請求や確定申告まわりの「ちょっと面倒」を片づける、小さな無料ツール集です。</p>
+    <ul class="badges">
+      <li>登録不要</li>
+      <li>入力内容は外部に送信しません</li>
+      <li>スマホ・iPad対応</li>
+    </ul>
+  </header>
+
+  <main>
+    <h2>ツール一覧</h2>
+    <!--
+      ===== ツールを追加するとき =====
+      下の <li> ブロックを1つコピーして、href・アイコン文字・タグ・名前・説明・ポイントを書き換えるだけです。
+      新しいツールのページには、上部に次の「戻るリンク」を入れてください：
+        <a class="back" href="./tools.html">← ツール一覧へ</a>
+    -->
+    <ul class="tool-list">
+      <li>
+        <a class="tool" href="./index.html">
+          <span class="top">
+            <span class="icon" aria-hidden="true">¥</span>
+            <span><span class="tag">請求書づくりに</span><span class="name">源泉徴収・請求額 逆算電卓</span></span>
+          </span>
+          <span class="desc">報酬額から、消費税・源泉徴収税を差し引いた振込額を計算。欲しい手取りから請求額の逆算もできます。</span>
+          <ul class="points">
+            <li>報酬→手取り、手取り→報酬の両方向に計算</li>
+            <li>100万円超の源泉徴収税率・振込手数料に対応</li>
+            <li>内訳をコピーして請求書やメールに</li>
+          </ul>
+          <span class="go"><span>電卓を開く</span></span>
+        </a>
+      </li>
+      <li>
+        <a class="tool" href="./checklist.html">
+          <span class="top">
+            <span class="icon" aria-hidden="true">✓</span>
+            <span><span class="tag">確定申告シーズンに</span><span class="name">確定申告 準備・抜け漏れチェッカー</span></span>
+          </span>
+          <span class="desc">自分の状況をタップで選ぶだけで、そろえておきたい書類や確認事項をリストで整理。抜け漏れ防止に。</span>
+          <ul class="points">
+            <li>副業・フリーランスなど状況に合わせて項目を表示</li>
+            <li>タップで確認済みにして進み具合を表示</li>
+            <li>チェック内容はこの端末にだけ保存</li>
+          </ul>
+          <span class="go"><span>チェックを始める</span></span>
+        </a>
+      </li>
+      <!-- 3作目以降はここに <li>…</li> を追加 -->
+    </ul>
+
+    <!-- ===== 案内エリア（プレースホルダー） =====
+         各 <a class="slot"> の href・タイトル・説明を差し替えて使ってください。
+         アフィリエイトリンクの場合は rel="sponsored noopener" と「PR」表記を付けてください。
+         使わない枠は <a> ごと削除してOKです。 -->
+    <section class="guide" aria-labelledby="guideTitle">
+      <h2 id="guideTitle">関連情報・おすすめ</h2>
+      <p class="lead">ツールと合わせて読みたい解説やサービスの案内（準備中）</p>
+      <div class="grid">
+        <a class="slot" href="#" data-slot="hub-1" rel="noopener">
+          <span class="tag">解説記事</span>
+          <b>（準備中）源泉徴収のしくみと請求書の書き方</b>
+          <span class="d">記事URLに差し替え予定</span>
+        </a>
+        <a class="slot" href="#" data-slot="hub-2" rel="noopener">
+          <span class="tag">解説記事</span>
+          <b>（準備中）副業・フリーランスの確定申告 準備ガイド</b>
+          <span class="d">記事URLに差し替え予定</span>
+        </a>
+        <a class="slot" href="#" data-slot="hub-3" rel="noopener">
+          <span class="tag">PR枠</span>
+          <b>（準備中）会計ソフト・サービスの案内</b>
+          <span class="d">アフィリエイトリンクに差し替え予定</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <ul>
+      <li>各ツールは計算や準備の目安としてお使いください。最終的な判断や申告内容・税額は、国税庁などの公式情報や税理士等の専門家にご確認ください。</li>
+      <li>入力内容はサーバーに送信されません。保存が必要なデータは、お使いの端末のブラウザ内にのみ保存されます。</li>
+    </ul>
+  </footer>
+</div>
+</body>
+</html>
