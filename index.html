@@ -1,77 +1,569 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>プロフィール</title>
-  <style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<meta name="description" content="フリーランス・個人事業主向け。報酬額から消費税・源泉徴収税・振込額を計算、または欲しい手取り額から請求額を逆算できる無料ツール。">
+<title>源泉徴収・請求額 逆算電卓</title>
+<style>
+  :root {
+    --bg: #f3f5f4;
+    --card: #ffffff;
+    --text: #18201e;
+    --sub: #5b6664;
+    --line: #dfe5e3;
+    --accent: #0f766e;
+    --accent-soft: #e3f3f1;
+    --minus: #b42318;
+    --plus: #0f766e;
+    --shadow: 0 1px 2px rgba(0,0,0,.05), 0 4px 16px rgba(0,0,0,.05);
+  }
+  @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #f5f5f7;
-      --card: #ffffff;
-      --text: #1d1d1f;
-      --sub: #6e6e73;
-      --accent: #0a84ff;
-      --border: #e5e5ea;
+      --bg: #0e1312;
+      --card: #18201e;
+      --text: #eef3f2;
+      --sub: #9aa8a5;
+      --line: #2a3533;
+      --accent: #2dd4bf;
+      --accent-soft: #123532;
+      --minus: #f97066;
+      --plus: #2dd4bf;
+      --shadow: none;
     }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #000000;
-        --card: #1c1c1e;
-        --text: #f5f5f7;
-        --sub: #a1a1a6;
-        --border: #2c2c2e;
-      }
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      min-height: 100vh;
-      padding: 48px 16px;
-    }
-    main { max-width: 480px; margin: 0 auto; text-align: center; }
-    .avatar {
-      width: 96px; height: 96px; border-radius: 50%;
-      margin: 0 auto 16px;
-      background: linear-gradient(135deg, #0a84ff, #5e5ce6);
-      color: #fff; font-size: 40px; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-    }
-    h1 { font-size: 1.5rem; margin-bottom: 4px; }
-    .bio { color: var(--sub); font-size: 0.95rem; margin-bottom: 32px; }
-    ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
-    a.link {
-      display: block;
-      padding: 16px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      color: var(--text);
-      text-decoration: none;
-      font-weight: 600;
-      transition: transform .1s, border-color .2s;
-    }
-    a.link:hover { border-color: var(--accent); }
-    a.link:active { transform: scale(0.98); }
-    footer { margin-top: 40px; color: var(--sub); font-size: 0.8rem; }
-  </style>
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.55;
+    min-height: 100vh;
+    padding: 20px 16px calc(32px + env(safe-area-inset-bottom));
+  }
+  header { max-width: 960px; margin: 0 auto 16px; }
+  h1 { font-size: 1.3rem; letter-spacing: .02em; }
+  header p { color: var(--sub); font-size: .88rem; margin-top: 2px; }
+  .wrap {
+    max-width: 960px; margin: 0 auto;
+    display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr);
+  }
+  @media (min-width: 768px) {
+    .wrap { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+    .result-col { position: sticky; top: 16px; }
+  }
+  .card {
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 18px; padding: 18px; box-shadow: var(--shadow);
+  }
+  .card + .card { margin-top: 16px; }
+  .label { display: block; font-size: .85rem; font-weight: 700; color: var(--sub); margin-bottom: 8px; }
+  .field + .field { margin-top: 18px; }
+
+  /* セグメントボタン */
+  .seg { display: flex; gap: 4px; background: var(--bg); border-radius: 12px; padding: 4px; }
+  .seg button {
+    flex: 1 1 0; min-width: 0; min-height: 44px; border: 0; border-radius: 9px;
+    background: transparent; color: var(--sub); font: inherit; font-size: .92rem; font-weight: 700;
+    cursor: pointer; padding: 6px 4px; touch-action: manipulation;
+  }
+  .seg button[aria-pressed="true"] { background: var(--card); color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+  .seg.big button { min-height: 52px; font-size: 1rem; }
+
+  /* 金額入力 */
+  .money { position: relative; }
+  .money input {
+    width: 100%; min-height: 60px; border: 2px solid var(--line); border-radius: 14px;
+    background: var(--card); color: var(--text);
+    font: inherit; font-size: clamp(1.25rem, 6.4vw, 1.7rem); font-weight: 700; text-align: right;
+    padding: 8px 44px 8px 14px; font-variant-numeric: tabular-nums;
+  }
+  .money.small input { min-height: 50px; font-size: 1.25rem; }
+  .money input:focus { outline: none; border-color: var(--accent); }
+  .money .unit { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--sub); font-weight: 700; pointer-events: none; }
+  .hint { font-size: .8rem; color: var(--sub); margin-top: 6px; }
+  .quick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .quick button {
+    min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line);
+    background: var(--card); color: var(--text); font: inherit; font-size: .85rem; font-weight: 600; cursor: pointer;
+    touch-action: manipulation;
+  }
+  .quick button:active, .seg button:active { transform: scale(.97); }
+
+  details.adv { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 12px; }
+  details.adv summary { cursor: pointer; font-weight: 700; color: var(--accent); min-height: 40px; display: flex; align-items: center; list-style: none; }
+  details.adv summary::-webkit-details-marker { display: none; }
+  details.adv summary::before { content: "＋"; margin-right: 6px; }
+  details.adv[open] summary::before { content: "−"; }
+
+  /* 結果 */
+  .hero { text-align: center; padding: 6px 0 14px; border-bottom: 1px dashed var(--line); }
+  .hero .cap { font-size: .85rem; color: var(--sub); font-weight: 700; }
+  .hero .val { font-size: clamp(1.5rem, 8.6vw, 2.3rem); font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; line-height: 1.2; overflow-wrap: anywhere; }
+  .hero .val small { font-size: 1.1rem; margin-left: 2px; }
+  .hero .note { font-size: .8rem; color: var(--sub); margin-top: 4px; min-height: 1.2em; }
+  table.bd { width: 100%; border-collapse: collapse; margin-top: 8px; font-variant-numeric: tabular-nums; }
+  table.bd th, table.bd td { padding: 11px 2px; border-bottom: 1px solid var(--line); font-size: .95rem; }
+  table.bd th { text-align: left; font-weight: 600; color: var(--sub); white-space: nowrap; padding-right: 8px; }
+  table.bd th .rt { font-size: .75rem; display: block; font-weight: 400; white-space: normal; }
+  table.bd td { text-align: right; font-weight: 700; white-space: nowrap; }
+  table.bd tr.total th, table.bd tr.total td { color: var(--text); font-size: 1.05rem; border-bottom: 0; }
+  table.bd tr.sum th, table.bd tr.sum td { color: var(--text); }
+  .minus { color: var(--minus); }
+  .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 14px; }
+  .btn {
+    min-height: 50px; border-radius: 12px; border: 0; font: inherit; font-weight: 700; font-size: .95rem;
+    cursor: pointer; touch-action: manipulation;
+  }
+  .btn.primary { background: var(--accent); color: #fff; }
+  @media (prefers-color-scheme: dark) { .btn.primary { color: #0e1312; } }
+  .btn.ghost { background: var(--accent-soft); color: var(--accent); }
+  .btn:active { transform: scale(.98); }
+
+  @media (max-width: 380px) {
+    body { padding-left: 12px; padding-right: 12px; }
+    .card { padding: 14px; }
+    .seg.big button { font-size: .85rem; }
+    .seg button { font-size: .85rem; }
+    table.bd th, table.bd td { font-size: .85rem; }
+    table.bd tr.total th, table.bd tr.total td { font-size: .92rem; }
+  }
+  .hist h2 { font-size: 1rem; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+  .hist h2 button { border: 0; background: none; color: var(--sub); font: inherit; font-size: .8rem; cursor: pointer; min-height: 36px; padding: 0 6px; }
+  .hist ul { list-style: none; }
+  .hist li button {
+    width: 100%; text-align: left; border: 0; border-bottom: 1px solid var(--line); background: none;
+    color: var(--text); font: inherit; font-size: .88rem; padding: 10px 2px; cursor: pointer;
+    display: flex; justify-content: space-between; gap: 8px; min-height: 44px; align-items: center;
+  }
+  .hist li span:last-child { color: var(--sub); white-space: nowrap; }
+  .hist .empty { color: var(--sub); font-size: .85rem; }
+
+  .toast {
+    position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(20px);
+    background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-size: .9rem; font-weight: 700;
+    opacity: 0; transition: .2s; pointer-events: none; z-index: 10;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  footer { max-width: 960px; margin: 24px auto 0; color: var(--sub); font-size: .76rem; line-height: 1.7; }
+  footer li { margin-left: 1.2em; }
+  [hidden] { display: none !important; }
+</style>
 </head>
 <body>
-  <main>
-    <div class="avatar" aria-hidden="true">T</div>
-    <h1>Test User</h1>
-    <p class="bio">動作確認用のプロフィール・リンク集ページです。</p>
-    <ul>
-      <li><a class="link" href="https://github.com/" target="_blank" rel="noopener">GitHub</a></li>
-      <li><a class="link" href="https://x.com/" target="_blank" rel="noopener">X (Twitter)</a></li>
-      <li><a class="link" href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a></li>
-      <li><a class="link" href="https://example.com/" target="_blank" rel="noopener">ブログ</a></li>
-      <li><a class="link" href="mailto:hello@example.com">お問い合わせ</a></li>
-    </ul>
-    <footer>&copy; <span id="year"></span> Test User</footer>
-  </main>
-  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+<header>
+  <h1>源泉徴収・請求額 逆算電卓</h1>
+  <p>フリーランス・個人事業主の請求書づくりに。消費税・源泉徴収税・振込額を一発計算。</p>
+</header>
+
+<div class="wrap">
+  <section class="input-col">
+    <div class="card">
+      <div class="field">
+        <span class="label">計算モード</span>
+        <div class="seg big" data-key="mode" role="group" aria-label="計算モード">
+          <button type="button" data-val="forward">報酬 → 手取り</button>
+          <button type="button" data-val="reverse">手取り → 報酬</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label" for="amount" id="amountLabel">報酬額（税抜）</label>
+        <div class="money">
+          <input id="amount" type="text" inputmode="numeric" autocomplete="off" placeholder="0" aria-describedby="amountHint">
+          <span class="unit">円</span>
+        </div>
+        <p class="hint" id="amountHint">消費税を含まない本体価格を入力</p>
+        <div class="quick" id="quick">
+          <button type="button" data-add="10000">+1万</button>
+          <button type="button" data-add="50000">+5万</button>
+          <button type="button" data-add="100000">+10万</button>
+          <button type="button" data-add="1000000">+100万</button>
+          <button type="button" data-clear="1">クリア</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="label">消費税率</span>
+        <div class="seg" data-key="taxRate" role="group" aria-label="消費税率">
+          <button type="button" data-val="10">10%</button>
+          <button type="button" data-val="8">8%</button>
+          <button type="button" data-val="0">なし</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <span class="label">源泉徴収</span>
+        <div class="seg" data-key="wh" role="group" aria-label="源泉徴収">
+          <button type="button" data-val="on">あり</button>
+          <button type="button" data-val="off">なし</button>
+        </div>
+      </div>
+
+      <details class="adv" id="adv">
+        <summary>詳細設定（源泉の対象・端数・振込手数料）</summary>
+        <div class="field" style="margin-top:10px">
+          <span class="label">源泉徴収の対象額</span>
+          <div class="seg" data-key="whBase" role="group" aria-label="源泉徴収の対象額">
+            <button type="button" data-val="ex">税抜額</button>
+            <button type="button" data-val="in">税込額</button>
+          </div>
+          <p class="hint">請求書で消費税額を明確に区分していれば「税抜額」で可。区分していない場合は税込額が対象。</p>
+        </div>
+        <div class="field">
+          <span class="label">消費税の端数処理</span>
+          <div class="seg" data-key="round" role="group" aria-label="消費税の端数処理">
+            <button type="button" data-val="floor">切り捨て</button>
+            <button type="button" data-val="round">四捨五入</button>
+            <button type="button" data-val="ceil">切り上げ</button>
+          </div>
+        </div>
+        <div class="field">
+          <label class="label" for="fee">振込手数料（こちら負担の場合）</label>
+          <div class="money small">
+            <input id="fee" type="text" inputmode="numeric" autocomplete="off" placeholder="0">
+            <span class="unit">円</span>
+          </div>
+          <p class="hint">先方負担なら 0 のまま。差し引かれる場合のみ入力。</p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <section class="result-col">
+    <div class="card" aria-live="polite">
+      <div class="hero">
+        <div class="cap" id="heroCap">振込額（手取り）</div>
+        <div class="val"><span id="heroVal">0</span><small>円</small></div>
+        <div class="note" id="heroNote"></div>
+      </div>
+      <table class="bd">
+        <tbody>
+          <tr><th>報酬額（税抜）</th><td id="rBase">0円</td></tr>
+          <tr id="rowTax"><th>消費税<span class="rt" id="rTaxRate"></span></th><td id="rTax">0円</td></tr>
+          <tr class="sum"><th>請求額（税込）</th><td id="rGross">0円</td></tr>
+          <tr id="rowWh"><th>源泉徴収税<span class="rt" id="rWhRate"></span></th><td class="minus" id="rWh">0円</td></tr>
+          <tr id="rowFee"><th>振込手数料</th><td class="minus" id="rFee">0円</td></tr>
+          <tr class="total"><th>振込額（手取り）</th><td id="rNet">0円</td></tr>
+        </tbody>
+      </table>
+      <div class="actions">
+        <button type="button" class="btn primary" id="copyBtn">内訳をコピー</button>
+        <button type="button" class="btn ghost" id="saveBtn">履歴に保存</button>
+      </div>
+    </div>
+
+    <div class="card hist">
+      <h2>計算履歴 <button type="button" id="clearHist">すべて削除</button></h2>
+      <ul id="histList"></ul>
+      <p class="empty" id="histEmpty">保存した計算がここに表示されます（この端末のみ）。</p>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <ul>
+    <li>源泉徴収税率は復興特別所得税を含む 10.21%（1回の支払いが100万円超の部分は 20.42%）で計算しています（所得税法204条1項1号等の報酬・料金の場合）。</li>
+    <li>源泉徴収税額の1円未満は切り捨てです。</li>
+    <li>本ツールは目安の計算です。対象となる報酬の種類や契約内容によって扱いが異なる場合があるため、最終的には税理士・税務署等にご確認ください。</li>
+    <li>入力内容はサーバーに送信されません。履歴はこの端末のブラウザ内にのみ保存されます。</li>
+  </ul>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var MAX = 9999999999; // 99億9999万…円まで
+  var STORE_KEY = "wh-calc-v1";
+  var state = { mode: "forward", taxRate: "10", wh: "on", whBase: "ex", round: "floor" };
+
+  // ---------- 計算ロジック（整数演算のみ） ----------
+  function calcTax(base, ratePct, mode) {
+    var x = base * ratePct; // 100倍された税額
+    if (mode === "ceil") return Math.ceil(x / 100);
+    if (mode === "round") return Math.floor((x + 50) / 100);
+    return Math.floor(x / 100);
+  }
+  // 源泉徴収税額：100万円以下 10.21%、超える部分 20.42%（1円未満切り捨て）
+  function calcWithholding(target) {
+    if (target <= 0) return 0;
+    if (target <= 1000000) return Math.floor(target * 1021 / 10000);
+    return 102100 + Math.floor((target - 1000000) * 2042 / 10000);
+  }
+  function forward(base, opt) {
+    var tax = calcTax(base, opt.taxRate, opt.round);
+    var gross = base + tax;
+    var whTarget = opt.wh ? (opt.whBase === "in" ? gross : base) : 0;
+    var wh = opt.wh ? calcWithholding(whTarget) : 0;
+    var net = gross - wh - opt.fee;
+    return { base: base, tax: tax, gross: gross, wh: wh, whTarget: whTarget, fee: opt.fee, net: net };
+  }
+  // 手取りが target 以上になる最小の税抜報酬額（net は base に対して単調非減少）
+  function reverse(target, opt) {
+    var lo = 0, hi = MAX;
+    if (forward(hi, opt).net < target) return null;
+    while (lo < hi) {
+      var mid = Math.floor((lo + hi) / 2);
+      if (forward(mid, opt).net >= target) hi = mid; else lo = mid + 1;
+    }
+    return forward(lo, opt);
+  }
+
+  // ---------- 入出力ユーティリティ ----------
+  function toInt(str) {
+    var s = String(str || "").replace(/[０-９]/g, function (c) {
+      return String.fromCharCode(c.charCodeAt(0) - 0xFEE0);
+    }).replace(/[^0-9]/g, "").replace(/^0+(?=\d)/, "");
+    if (!s) return 0;
+    var n = parseInt(s, 10);
+    return n > MAX ? MAX : n;
+  }
+  function fmt(n) { return n.toLocaleString("ja-JP"); }
+  function yen(n) { return fmt(n) + "円"; }
+  var $ = function (id) { return document.getElementById(id); };
+
+  var amountEl = $("amount"), feeEl = $("fee");
+  var last = null;
+
+  function opts() {
+    return {
+      taxRate: parseInt(state.taxRate, 10),
+      wh: state.wh === "on",
+      whBase: state.whBase,
+      round: state.round,
+      fee: toInt(feeEl.value)
+    };
+  }
+
+  // 入力欄をカンマ区切りに整形（カーソル位置を数字の個数基準で保持）
+  function reformat(el) {
+    var raw = el.value;
+    var caret = el.selectionStart == null ? raw.length : el.selectionStart;
+    var digitsBefore = raw.slice(0, caret).replace(/[^0-9０-９]/g, "").length;
+    var n = toInt(raw);
+    var hasDigit = /[0-9０-９]/.test(raw);
+    var out = hasDigit ? fmt(n) : "";
+    if (out === raw) return;
+    el.value = out;
+    var pos = 0, seen = 0;
+    while (pos < out.length && seen < digitsBefore) {
+      if (/[0-9]/.test(out[pos])) seen++;
+      pos++;
+    }
+    try { el.setSelectionRange(pos, pos); } catch (e) {}
+  }
+
+  function render() {
+    var o = opts();
+    var amt = toInt(amountEl.value);
+    var r, note = "";
+
+    if (state.mode === "forward") {
+      r = forward(amt, o);
+      $("heroCap").textContent = "振込額（手取り）";
+      $("heroVal").textContent = fmt(r.net);
+    } else {
+      r = amt > 0 ? reverse(amt, o) : forward(0, o);
+      $("heroCap").textContent = "請求すべき報酬額（税抜）";
+      if (!r) {
+        r = forward(0, o);
+        note = "金額が大きすぎます";
+      } else if (amt > 0) {
+        if (r.net === amt) note = "手取りがぴったり " + yen(amt) + " になります";
+        else note = "端数の都合で手取りは " + yen(r.net) + "（+" + fmt(r.net - amt) + "円）";
+      }
+      $("heroVal").textContent = fmt(r.base);
+    }
+    if (state.mode === "forward" && r.net < 0) note = "手数料・源泉税が請求額を上回っています";
+    $("heroNote").textContent = note;
+
+    $("rBase").textContent = yen(r.base);
+    $("rTax").textContent = yen(r.tax);
+    $("rTaxRate").textContent = o.taxRate ? o.taxRate + "%" : "";
+    $("rowTax").hidden = o.taxRate === 0;
+    $("rGross").textContent = yen(r.gross);
+    $("rowWh").hidden = !o.wh;
+    $("rWh").textContent = "−" + yen(r.wh);
+    $("rWhRate").textContent = o.wh
+      ? (r.whTarget > 1000000 ? "10.21%＋超過分20.42%" : "10.21%") + "／対象 " + yen(r.whTarget)
+      : "";
+    $("rowFee").hidden = o.fee === 0;
+    $("rFee").textContent = "−" + yen(r.fee);
+    $("rNet").textContent = yen(r.net);
+    last = r;
+    persist();
+  }
+
+  // ---------- セグメントボタン ----------
+  function syncSegs() {
+    document.querySelectorAll(".seg").forEach(function (seg) {
+      var key = seg.getAttribute("data-key");
+      seg.querySelectorAll("button").forEach(function (b) {
+        b.setAttribute("aria-pressed", String(b.getAttribute("data-val") === state[key]));
+      });
+    });
+    var rev = state.mode === "reverse";
+    $("amountLabel").textContent = rev ? "欲しい振込額（手取り）" : "報酬額（税抜）";
+    $("amountHint").textContent = rev
+      ? "口座に入ってほしい金額を入力すると、必要な税抜報酬額を逆算します"
+      : "消費税を含まない本体価格を入力";
+    var whBaseSeg = document.querySelector('.seg[data-key="whBase"]');
+    whBaseSeg.style.opacity = state.wh === "on" ? "1" : ".45";
+  }
+  document.querySelectorAll(".seg").forEach(function (seg) {
+    seg.addEventListener("click", function (e) {
+      var b = e.target.closest("button");
+      if (!b) return;
+      var key = seg.getAttribute("data-key");
+      if (key === "mode" && state.mode !== b.getAttribute("data-val") && last) {
+        // モード切替時は、現在の結果を引き継いで入力欄にセット
+        amountEl.value = fmt(state.mode === "forward" ? Math.max(last.net, 0) : last.base);
+        if (toInt(amountEl.value) === 0) amountEl.value = "";
+      }
+      state[key] = b.getAttribute("data-val");
+      syncSegs();
+      render();
+    });
+  });
+
+  // ---------- 入力 ----------
+  [amountEl, feeEl].forEach(function (el) {
+    el.addEventListener("input", function () { reformat(el); render(); });
+    el.addEventListener("focus", function () { setTimeout(function () { try { el.select(); } catch (e) {} }, 0); });
+  });
+  $("quick").addEventListener("click", function (e) {
+    var b = e.target.closest("button");
+    if (!b) return;
+    if (b.hasAttribute("data-clear")) amountEl.value = "";
+    else amountEl.value = fmt(Math.min(MAX, toInt(amountEl.value) + parseInt(b.getAttribute("data-add"), 10)));
+    render();
+  });
+
+  // ---------- コピー ----------
+  function toast(msg) {
+    var t = $("toast");
+    t.textContent = msg;
+    t.classList.add("show");
+    clearTimeout(toast._t);
+    toast._t = setTimeout(function () { t.classList.remove("show"); }, 1600);
+  }
+  function summaryText(r) {
+    var o = opts();
+    var lines = ["報酬額（税抜）：" + yen(r.base)];
+    if (o.taxRate) lines.push("消費税（" + o.taxRate + "%）：" + yen(r.tax));
+    lines.push("請求額（税込）：" + yen(r.gross));
+    if (o.wh) lines.push("源泉徴収税：−" + yen(r.wh));
+    if (o.fee) lines.push("振込手数料：−" + yen(r.fee));
+    lines.push("差引お振込額：" + yen(r.net));
+    return lines.join("\n");
+  }
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function (resolve, reject) {
+      var ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed"; ta.style.opacity = "0"; ta.style.fontSize = "16px";
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, text.length);
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(ta);
+      ok ? resolve() : reject();
+    });
+  }
+  $("copyBtn").addEventListener("click", function () {
+    if (!last) return;
+    copyText(summaryText(last)).then(function () { toast("内訳をコピーしました"); },
+      function () { toast("コピーできませんでした"); });
+  });
+
+  // ---------- 保存・履歴（localStorage） ----------
+  var history = [];
+  function load() {
+    try {
+      var d = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
+      if (!d) return;
+      ["mode", "taxRate", "wh", "whBase", "round"].forEach(function (k) {
+        if (typeof d.state === "object" && d.state && typeof d.state[k] === "string") state[k] = d.state[k];
+      });
+      if (d.fee) feeEl.value = fmt(toInt(d.fee));
+      if (Array.isArray(d.history)) history = d.history.slice(0, 20);
+    } catch (e) {}
+  }
+  function persist() {
+    try {
+      localStorage.setItem(STORE_KEY, JSON.stringify({ state: state, fee: toInt(feeEl.value), history: history }));
+    } catch (e) {}
+  }
+  function renderHist() {
+    var ul = $("histList");
+    ul.innerHTML = "";
+    history.forEach(function (h, i) {
+      var li = document.createElement("li");
+      var b = document.createElement("button");
+      b.type = "button";
+      var a = document.createElement("span");
+      a.textContent = "税抜 " + yen(h.base) + " → 手取り " + yen(h.net);
+      var d = document.createElement("span");
+      d.textContent = h.date;
+      b.appendChild(a); b.appendChild(d);
+      b.addEventListener("click", function () { restore(i); });
+      li.appendChild(b);
+      ul.appendChild(li);
+    });
+    $("histEmpty").hidden = history.length > 0;
+    $("clearHist").hidden = history.length === 0;
+  }
+  function restore(i) {
+    var h = history[i];
+    if (!h) return;
+    Object.keys(h.state).forEach(function (k) { state[k] = h.state[k]; });
+    state.mode = "forward";
+    amountEl.value = h.base ? fmt(h.base) : "";
+    feeEl.value = h.fee ? fmt(h.fee) : "";
+    syncSegs();
+    render();
+    toast("履歴を読み込みました");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+  $("saveBtn").addEventListener("click", function () {
+    if (!last || last.base === 0) { toast("金額を入力してください"); return; }
+    var now = new Date();
+    history.unshift({
+      base: last.base, net: last.net, fee: last.fee,
+      state: { taxRate: state.taxRate, wh: state.wh, whBase: state.whBase, round: state.round },
+      date: (now.getMonth() + 1) + "/" + now.getDate()
+    });
+    history = history.slice(0, 20);
+    persist();
+    renderHist();
+    toast("履歴に保存しました");
+  });
+  $("clearHist").addEventListener("click", function () {
+    if (!confirm("計算履歴をすべて削除しますか？")) return;
+    history = [];
+    persist();
+    renderHist();
+  });
+
+  // ---------- 初期化 ----------
+  load();
+  syncSegs();
+  render();
+  renderHist();
+
+  // 検証用に計算関数を公開
+  window.__whCalc = { forward: forward, reverse: reverse, calcWithholding: calcWithholding, calcTax: calcTax, toInt: toInt };
+})();
+</script>
 </body>
 </html>
