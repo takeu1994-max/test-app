@@ -39,5 +39,7 @@
 - SEO：各ページに canonical・OGP（`og-image.png`）・アイコン（`favicon.ico` / `favicon.svg` / `apple-touch-icon.png`）。`sitemap.xml`・`robots.txt`
 - `about.html`：運営者情報・免責事項・プライバシーポリシー・お問い合わせ・国税庁リンク
 - `site.css`：使い方・FAQ、有料商品の案内枠、フッターリンクの共通スタイル
-- **`site.js`：販売ページのURL（`PRODUCTS`）とお問い合わせフォームのURL（`SITE.contactUrl`）はここだけ書き換えれば全ページに反映**（空欄のあいだは「準備中」表示）
+- **`site.js`：販売ページのURLは先頭の `BOOTH_URL_P1`、お問い合わせフォームは `SITE.contactUrl` を書き換えれば全ページに反映**
+  - P1（請求書・見積書テンプレート）は紹介文と特徴を表示。URLが空のあいだは「BOOTHで近日販売予定です」と表示
+  - P2・P3 は `available: false` のため案内枠を非表示（準備ができたら `true` にする）
 - ページを追加したら `sitemap.xml` にも追記する

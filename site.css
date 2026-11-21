@@ -42,6 +42,15 @@
 }
 .promo-box .promo-btn.off { color: var(--sub); background: var(--bg, #f3f5f4); }
 .promo-box .promo-note { font-size: .72rem; color: var(--sub); margin-top: 6px; }
+.promo-box .promo-head { display: flex; flex-wrap: wrap; gap: 4px; }
+.promo-box .promo-format { color: var(--accent); background: var(--accent-soft); }
+.promo-box .promo-feats { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; font-size: .8rem; color: var(--text); }
+.promo-box .promo-feats li { position: relative; padding-left: 1.2em; line-height: 1.55; }
+.promo-box .promo-feats li::before { content: "✓"; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
+.promo-box .promo-soon {
+  margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: var(--accent-soft); color: var(--accent);
+  font-size: .82rem; font-weight: 700; text-align: center;
+}
 .site-section > .promo-box:first-child { margin-top: 0; }
 
 /* フッターのサイト内リンク */
