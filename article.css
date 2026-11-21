@@ -79,7 +79,12 @@ table.t td.num { text-align: right; font-variant-numeric: tabular-nums; white-sp
 .refs a { display: inline-flex; align-items: center; min-height: 44px; }
 footer { margin-top: 20px; color: var(--sub); font-size: .76rem; line-height: 1.7; }
 footer .must { color: var(--text); font-weight: 700; font-size: .84rem; border-left: 3px solid var(--accent); padding: 4px 0 4px 10px; margin-bottom: 8px; }
-@media (max-width: 380px) { body { padding-left: 12px; padding-right: 12px; } h1 { font-size: 1.3rem; } }
+@media (max-width: 380px) {
+  body { padding-left: 12px; padding-right: 12px; } h1 { font-size: 1.3rem; }
+  /* 小さい画面では表を横スクロールさせずに収める */
+  table.t { min-width: 0; font-size: .8rem; }
+  table.t th, table.t td { padding: 6px 7px; }
+}
 
 /* 記事の前後リンク・記事一覧 */
 .next { margin-top: 16px; display: grid; gap: 8px; }
