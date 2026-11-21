@@ -71,6 +71,12 @@
   }
   .seg button[aria-pressed="true"] { background: var(--card); color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
   .seg.big button { min-height: 52px; font-size: 1rem; }
+  .seg button:disabled { opacity: .4; cursor: default; }
+  .seg button:disabled:active { transform: none; }
+  .row2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+  .row2 .field { margin-top: 0; }
+  .field + .row2, .row2 + .field { margin-top: 18px; }
+  .hint.off { opacity: .5; }
 
   /* 金額入力 */
   .money { position: relative; }
@@ -78,15 +84,21 @@
     width: 100%; min-height: 60px; border: 2px solid var(--line); border-radius: 14px;
     background: var(--card); color: var(--text);
     font: inherit; font-size: clamp(1.25rem, 6.4vw, 1.7rem); font-weight: 700; text-align: right;
-    padding: 8px 44px 8px 14px; font-variant-numeric: tabular-nums;
+    padding: 8px 44px 8px 54px; font-variant-numeric: tabular-nums;
   }
-  .money.small input { min-height: 50px; font-size: 1.25rem; }
+  .money.small input { min-height: 50px; font-size: 1.25rem; padding-left: 14px; }
+  .money .clear {
+    position: absolute; left: 6px; top: 50%; transform: translateY(-50%);
+    width: 44px; height: 44px; border: 0; border-radius: 50%; background: transparent;
+    color: var(--sub); font: inherit; font-size: 1.3rem; line-height: 1; cursor: pointer; touch-action: manipulation;
+  }
+  .money .clear:active { background: var(--bg); }
   .money input:focus { outline: none; border-color: var(--accent); }
   .money .unit { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--sub); font-weight: 700; pointer-events: none; }
   .hint { font-size: .8rem; color: var(--sub); margin-top: 6px; }
-  .quick { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .quick { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; margin-top: 10px; }
   .quick button {
-    min-height: 40px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--line);
+    min-height: 44px; padding: 0 4px; white-space: nowrap; border-radius: 999px; border: 1px solid var(--line);
     background: var(--card); color: var(--text); font: inherit; font-size: .85rem; font-weight: 600; cursor: pointer;
     touch-action: manipulation;
   }
@@ -173,6 +185,7 @@
         <label class="label" for="amount" id="amountLabel">報酬額（税抜）</label>
         <div class="money">
           <input id="amount" type="text" inputmode="numeric" autocomplete="off" placeholder="0" aria-describedby="amountHint">
+          <button type="button" class="clear" id="clearAmt" aria-label="金額をクリア" hidden>×</button>
           <span class="unit">円</span>
         </div>
         <p class="hint" id="amountHint">消費税を含まない本体価格を入力</p>
@@ -181,24 +194,23 @@
           <button type="button" data-add="50000">+5万</button>
           <button type="button" data-add="100000">+10万</button>
           <button type="button" data-add="1000000">+100万</button>
-          <button type="button" data-clear="1">クリア</button>
         </div>
       </div>
 
-      <div class="field">
-        <span class="label">消費税率</span>
-        <div class="seg" data-key="taxRate" role="group" aria-label="消費税率">
-          <button type="button" data-val="10">10%</button>
-          <button type="button" data-val="8">8%</button>
-          <button type="button" data-val="0">なし</button>
+      <div class="row2">
+        <div class="field">
+          <span class="label">消費税</span>
+          <div class="seg" data-key="taxRate" role="group" aria-label="消費税率">
+            <button type="button" data-val="10">10%</button>
+            <button type="button" data-val="0">なし</button>
+          </div>
         </div>
-      </div>
-
-      <div class="field">
-        <span class="label">源泉徴収</span>
-        <div class="seg" data-key="wh" role="group" aria-label="源泉徴収">
-          <button type="button" data-val="on">あり</button>
-          <button type="button" data-val="off">なし</button>
+        <div class="field">
+          <span class="label">源泉徴収</span>
+          <div class="seg" data-key="wh" role="group" aria-label="源泉徴収">
+            <button type="button" data-val="on">あり</button>
+            <button type="button" data-val="off">なし</button>
+          </div>
         </div>
       </div>
 
@@ -210,7 +222,7 @@
             <button type="button" data-val="ex">税抜額</button>
             <button type="button" data-val="in">税込額</button>
           </div>
-          <p class="hint">請求書で消費税額を明確に区分していれば「税抜額」で可。区分していない場合は税込額が対象。</p>
+          <p class="hint" id="whBaseHint">請求書で消費税額を明確に区分していれば「税抜額」で可。区分していない場合は税込額が対象。</p>
         </div>
         <div class="field">
           <span class="label">消費税の端数処理</span>
@@ -280,7 +292,20 @@
 
   var MAX = 9999999999; // 99億9999万…円まで
   var STORE_KEY = "wh-calc-v1";
-  var state = { mode: "forward", taxRate: "10", wh: "on", whBase: "ex", round: "floor" };
+  var DEFAULTS = { mode: "forward", taxRate: "10", wh: "on", whBase: "ex", round: "floor" };
+  var ALLOWED = {
+    mode: ["forward", "reverse"], taxRate: ["10", "0"], wh: ["on", "off"],
+    whBase: ["ex", "in"], round: ["floor", "round", "ceil"]
+  };
+  var state = {};
+  // 保存データの値を検証して取り込む（旧バージョンの「8%」など不正値は初期値に戻す）
+  function applyState(src) {
+    Object.keys(src || {}).forEach(function (k) {
+      if (!ALLOWED[k]) return;
+      state[k] = ALLOWED[k].indexOf(src[k]) >= 0 ? src[k] : DEFAULTS[k];
+    });
+  }
+  applyState(DEFAULTS);
 
   // ---------- 計算ロジック（整数演算のみ） ----------
   function calcTax(base, ratePct, mode) {
@@ -300,8 +325,9 @@
     var gross = base + tax;
     var whTarget = opt.wh ? (opt.whBase === "in" ? gross : base) : 0;
     var wh = opt.wh ? calcWithholding(whTarget) : 0;
-    var net = gross - wh - opt.fee;
-    return { base: base, tax: tax, gross: gross, wh: wh, whTarget: whTarget, fee: opt.fee, net: net };
+    var fee = gross > 0 ? opt.fee : 0; // 報酬0円なら振込自体が発生しない
+    var net = gross - wh - fee;
+    return { base: base, tax: tax, gross: gross, wh: wh, whTarget: whTarget, fee: fee, net: net };
   }
   // 手取りが target 以上になる最小の税抜報酬額（net は base に対して単調非減少）
   function reverse(target, opt) {
@@ -329,6 +355,7 @@
 
   var amountEl = $("amount"), feeEl = $("fee");
   var last = null;
+  var carryBase = null; // 報酬→手取りから切替えた時の元の報酬額（同じ手取りになる報酬が複数ある場合に優先）
 
   function opts() {
     return {
@@ -368,7 +395,8 @@
       $("heroCap").textContent = "振込額（手取り）";
       $("heroVal").textContent = fmt(r.net);
     } else {
-      r = amt > 0 ? reverse(amt, o) : forward(0, o);
+      if (amt > 0 && carryBase !== null && forward(carryBase, o).net === amt) r = forward(carryBase, o);
+      else r = amt > 0 ? reverse(amt, o) : forward(0, o);
       $("heroCap").textContent = "請求すべき報酬額（税抜）";
       if (!r) {
         r = forward(0, o);
@@ -395,6 +423,7 @@
     $("rowFee").hidden = o.fee === 0;
     $("rFee").textContent = "−" + yen(r.fee);
     $("rNet").textContent = yen(r.net);
+    $("clearAmt").hidden = amountEl.value === "";
     last = r;
     persist();
   }
@@ -412,18 +441,27 @@
     $("amountHint").textContent = rev
       ? "口座に入ってほしい金額を入力すると、必要な税抜報酬額を逆算します"
       : "消費税を含まない本体価格を入力";
-    var whBaseSeg = document.querySelector('.seg[data-key="whBase"]');
-    whBaseSeg.style.opacity = state.wh === "on" ? "1" : ".45";
+    // 関係のない設定は押せないようにする
+    var whBaseOn = state.wh === "on" && state.taxRate !== "0"; // 税なしなら税抜＝税込
+    var roundOn = state.taxRate !== "0";
+    setSegEnabled("whBase", whBaseOn);
+    setSegEnabled("round", roundOn);
+    $("whBaseHint").classList.toggle("off", !whBaseOn);
+  }
+  function setSegEnabled(key, on) {
+    document.querySelectorAll('.seg[data-key="' + key + '"] button').forEach(function (b) { b.disabled = !on; });
   }
   document.querySelectorAll(".seg").forEach(function (seg) {
     seg.addEventListener("click", function (e) {
       var b = e.target.closest("button");
-      if (!b) return;
+      if (!b || b.disabled) return;
       var key = seg.getAttribute("data-key");
       if (key === "mode" && state.mode !== b.getAttribute("data-val") && last) {
         // モード切替時は、現在の結果を引き継いで入力欄にセット
-        amountEl.value = fmt(state.mode === "forward" ? Math.max(last.net, 0) : last.base);
-        if (toInt(amountEl.value) === 0) amountEl.value = "";
+        var toReverse = state.mode === "forward";
+        var v = toReverse ? Math.max(last.net, 0) : last.base;
+        carryBase = toReverse && v > 0 ? last.base : null;
+        amountEl.value = v > 0 ? fmt(v) : "";
       }
       state[key] = b.getAttribute("data-val");
       syncSegs();
@@ -433,15 +471,21 @@
 
   // ---------- 入力 ----------
   [amountEl, feeEl].forEach(function (el) {
-    el.addEventListener("input", function () { reformat(el); render(); });
+    el.addEventListener("input", function () { if (el === amountEl) carryBase = null; reformat(el); render(); });
     el.addEventListener("focus", function () { setTimeout(function () { try { el.select(); } catch (e) {} }, 0); });
   });
   $("quick").addEventListener("click", function (e) {
     var b = e.target.closest("button");
     if (!b) return;
-    if (b.hasAttribute("data-clear")) amountEl.value = "";
-    else amountEl.value = fmt(Math.min(MAX, toInt(amountEl.value) + parseInt(b.getAttribute("data-add"), 10)));
+    carryBase = null;
+    amountEl.value = fmt(Math.min(MAX, toInt(amountEl.value) + parseInt(b.getAttribute("data-add"), 10)));
     render();
+  });
+  $("clearAmt").addEventListener("click", function () {
+    carryBase = null;
+    amountEl.value = "";
+    render();
+    amountEl.focus();
   });
 
   // ---------- コピー ----------
@@ -492,11 +536,11 @@
     try {
       var d = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
       if (!d) return;
-      ["mode", "taxRate", "wh", "whBase", "round"].forEach(function (k) {
-        if (typeof d.state === "object" && d.state && typeof d.state[k] === "string") state[k] = d.state[k];
-      });
+      if (d.state && typeof d.state === "object") applyState(d.state);
       if (d.fee) feeEl.value = fmt(toInt(d.fee));
-      if (Array.isArray(d.history)) history = d.history.slice(0, 20);
+      if (Array.isArray(d.history)) history = d.history.filter(function (h) {
+        return h && typeof h.base === "number" && typeof h.net === "number";
+      }).slice(0, 20);
     } catch (e) {}
   }
   function persist() {
@@ -526,10 +570,11 @@
   function restore(i) {
     var h = history[i];
     if (!h) return;
-    Object.keys(h.state).forEach(function (k) { state[k] = h.state[k]; });
+    applyState(h.state || {});
     state.mode = "forward";
+    carryBase = null;
     amountEl.value = h.base ? fmt(h.base) : "";
-    feeEl.value = h.fee ? fmt(h.fee) : "";
+    feeEl.value = toInt(h.fee) ? fmt(toInt(h.fee)) : "";
     syncSegs();
     render();
     toast("履歴を読み込みました");
