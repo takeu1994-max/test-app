@@ -10,7 +10,7 @@
   //   ・このURLを使うのは /templates（テンプレート紹介ページ）の購入ボタンだけです。
   //   ・ツール画面や記事の小さな案内は /templates に移動するので、URLが空でもリンク切れになりません。
   //   ・空 ("") のあいだは「BOOTHで近日販売予定」と表示され、入れると「販売中」に変わります。
-  var BOOTH_URL_P1 = "";
+  var BOOTH_URL_P1 = "https://keirilab.booth.pm/items/9192915";
   // ▲▲▲ ここまで ▲▲▲
 
   var SITE = {
