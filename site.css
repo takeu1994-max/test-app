@@ -83,18 +83,34 @@ a.rel-card:hover, a.rel-card:focus-visible { border-color: var(--accent); }
 
 .cta + .promo-box.compact, p + .promo-box.compact { margin-top: 12px; }
 
-/* ---------- 購入ボタン（/templates） ---------- */
+/* ---------- 購入エリア（/templates） ---------- */
 .buy { margin-top: 14px; }
-.buy-btn {
-  display: flex; align-items: center; justify-content: center; min-height: 52px; border-radius: 14px;
-  background: var(--accent); color: #fff; font-weight: 800; font-size: 1rem; text-decoration: none;
+.buy-box {
+  border: 2px solid var(--accent); border-radius: 16px; background: var(--accent-soft);
+  padding: 14px; text-align: center;
 }
-@media (prefers-color-scheme: dark) { .buy-btn { color: #0e1312; } }
+.buy-lead { font-size: .86rem; font-weight: 800; color: var(--accent); margin: 0 0 10px; }
+.buy-box a.buy-btn, .site-section .buy-box a.buy-btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
+  min-height: 64px; padding: 10px 14px; border-radius: 14px;
+  background: var(--accent); color: #fff; text-decoration: none;
+  box-shadow: 0 2px 0 rgba(0,0,0,.15), 0 6px 16px rgba(15,118,110,.25);
+  touch-action: manipulation;
+}
+.buy-box a.buy-btn:hover { filter: brightness(1.06); }
+.buy-box a.buy-btn:active { transform: translateY(1px); box-shadow: 0 1px 0 rgba(0,0,0,.15); }
+.buy-box a.buy-btn:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
+.buy-main { display: inline-flex; align-items: center; gap: 6px; font-size: 1.05rem; font-weight: 800; letter-spacing: .02em; }
+.buy-icon { font-size: 1rem; }
+.buy-sub { font-size: .76rem; font-weight: 700; opacity: .92; }
+@media (prefers-color-scheme: dark) {
+  .buy-box a.buy-btn, .site-section .buy-box a.buy-btn { color: #0e1312; box-shadow: none; }
+}
 .buy-soon {
-  display: flex; align-items: center; justify-content: center; min-height: 52px; border-radius: 14px;
-  background: var(--accent-soft); color: var(--accent); font-weight: 800; font-size: .95rem; text-align: center; padding: 6px 12px;
+  display: flex; align-items: center; justify-content: center; min-height: 56px; border-radius: 14px;
+  background: var(--card); color: var(--accent); font-weight: 800; font-size: .95rem; padding: 6px 12px; margin: 0;
 }
-.buy-note { font-size: .76rem; color: var(--sub); margin-top: 6px; text-align: center; }
+.buy-note { font-size: .76rem; color: var(--sub); margin: 8px 0 0; line-height: 1.6; }
 
 /* ---------- フッターのサイト内リンク ---------- */
 .site-links { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 0 0 10px; padding: 0; list-style: none; }
@@ -103,5 +119,10 @@ a.rel-card:hover, a.rel-card:focus-visible { border-color: var(--accent); }
 
 @media (max-width: 380px) {
   .site-section { padding: 14px; }
+  .buy-box { padding: 10px; }
+  .buy-box a.buy-btn, .site-section .buy-box a.buy-btn { padding: 10px 8px; }
+  .buy-main { font-size: .92rem; gap: 4px; }
+  .buy-sub { font-size: .7rem; }
+  .buy-lead { font-size: .8rem; }
   .site-header .brand { font-size: .86rem; }
 }

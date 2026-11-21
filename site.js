@@ -65,21 +65,30 @@
 
   // ---------- 購入ボタン（/templates だけで使用） ----------
   // <div class="buy" data-buy="p1"></div>
+  //   ・枠の中に「見出し → 緑のボタン → 注記」の順で、ひとかたまりで表示します
   document.querySelectorAll("[data-buy]").forEach(function (slot) {
     var p = PRODUCTS[slot.getAttribute("data-buy")];
     slot.innerHTML = "";
     if (!p) return;
+    var box = el("div", "buy-box");
     if (p.url) {
-      var a = el("a", "buy-btn", "BOOTHの販売ページを見る");
+      box.appendChild(el("p", "buy-lead", "ご購入はBOOTH（外部サイト）から"));
+      var a = el("a", "buy-btn");
       a.href = p.url;
       a.target = "_blank";
       a.rel = "noopener";
-      slot.appendChild(a);
-      slot.appendChild(el("p", "buy-note", "外部サイト（BOOTH）に移動します。価格・お支払い方法・返品などの扱いは販売ページでご確認ください。"));
+      var main = el("span", "buy-main", "BOOTHの販売ページを見る");
+      main.appendChild(el("span", "buy-icon", "↗"));
+      main.lastChild.setAttribute("aria-hidden", "true");
+      a.appendChild(main);
+      a.appendChild(el("span", "buy-sub", "購入はこちら（新しいタブで開きます）"));
+      box.appendChild(a);
+      box.appendChild(el("p", "buy-note", "価格・お支払い方法・返品などの扱いは、BOOTHの販売ページでご確認ください。"));
     } else {
-      slot.appendChild(el("p", "buy-soon", "BOOTHで近日販売予定です"));
-      slot.appendChild(el("p", "buy-note", "販売を開始したら、このページに購入ボタンを表示します。"));
+      box.appendChild(el("p", "buy-soon", "BOOTHで近日販売予定です"));
+      box.appendChild(el("p", "buy-note", "販売を開始したら、ここに購入ボタンを表示します。"));
     }
+    slot.appendChild(box);
   });
 
   // ---------- お問い合わせ導線 ----------
