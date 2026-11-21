@@ -6,6 +6,21 @@
 <meta name="theme-color" content="#0f766e">
 <meta name="description" content="請求書・報酬連絡・見積もりを送る前に、宛名・金額内訳・消費税や源泉徴収の扱い・支払期限・振込先などの記載漏れをタップで確認できる無料チェックツール。">
 <title>請求書 記載漏れチェッカー</title>
+<link rel="canonical" href="https://test-app.kaikeilab.workers.dev/invoice-check">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="請求・確定申告のかんたんツール">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="請求書 記載漏れチェッカー">
+<meta property="og:description" content="請求書・報酬連絡・見積もりを送る前に、宛名・金額内訳・消費税や源泉徴収の扱い・支払期限・振込先などの記載漏れをタップで確認できる無料チェックツール。">
+<meta property="og:url" content="https://test-app.kaikeilab.workers.dev/invoice-check">
+<meta property="og:image" content="https://test-app.kaikeilab.workers.dev/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/site.css">
 <style>
   :root {
     --bg: #f3f5f4;
@@ -144,7 +159,7 @@
 </style>
 </head>
 <body>
-<div class="topbar"><a class="back" href="./tools.html">← ツール一覧へ</a></div>
+<div class="topbar"><a class="back" href="/tools">← ツール一覧へ</a></div>
 <header>
   <h1>請求書 記載漏れチェッカー</h1>
   <p>請求書・報酬の連絡・見積もりを送る前に、記載漏れや確認ポイントをタップでチェック。</p>
@@ -178,6 +193,7 @@
       <button type="button" class="btn plain wide" id="nextDoc">次の書類へ（チェックとメモを消去）</button>
       <p class="count" id="docCount" hidden></p>
     </div>
+    <div class="promo-box" data-product="p1" data-lead="この確認項目をはじめから反映した請求書・見積書テンプレート。消費税・源泉徴収の計算も自動です。"></div>
   </aside>
 
   <main class="card">
@@ -192,7 +208,28 @@
   </main>
 </div>
 
+<section class="site-section" aria-labelledby="howto-title">
+  <h2 id="howto-title">使い方</h2>
+  <ol class="howto">
+    <li>送る書類の種類と、インボイス登録・源泉徴収の状況を選びます（分からなければ「わからない」でOK）。</li>
+    <li>書類を見ながら、確認できた項目をタップして✓を付けます。進み具合は上のバーで分かります。</li>
+    <li>全部確認できたら送付。次の書類は「次の書類へ」でチェックを消して、くり返し使えます。</li>
+  </ol>
+  <h2 class="sub-h" id="faq-title">よくある質問</h2>
+  <div class="faq">
+    <details><summary>このチェックをすれば、書類は正しいと言えますか？</summary><div class="a">いいえ。一般的な確認ポイントの目安です。インボイスとして必要な記載事項など正式な要件は、<a href="https://www.nta.go.jp/taxes/shiraberu/zeimokubetsu/shohi/keigenzeiritsu/index.htm" target="_blank" rel="noopener">国税庁のインボイス制度のページ</a>や取引先の指定をご確認ください。</div></details>
+    <details><summary>自分がインボイス登録しているか分かりません。</summary><div class="a"><a href="https://www.invoice-kohyo.nta.go.jp/" target="_blank" rel="noopener">国税庁 適格請求書発行事業者公表サイト</a>で、登録番号などから確認できます。</div></details>
+    <details><summary>チェックやメモはどこに保存されますか？</summary><div class="a">この端末のブラウザ内だけに保存され、外部には送信されません。別の端末とは共有されません。</div></details>
+  </div>
+</section>
+
 <footer>
+  <ul class="site-links">
+    <li><a href="/tools">ツール一覧</a></li>
+    <li><a href="/about">このサイトについて</a></li>
+    <li><a href="/about#privacy">プライバシーポリシー</a></li>
+    <li><a href="/about#contact">お問い合わせ</a></li>
+  </ul>
   <p class="must">最終的な記載内容や税務・契約上の判断は、国税庁などの公式情報、取引先との契約内容、税理士等の専門家にご確認ください。</p>
   <ul>
     <li>本ツールは一般的な確認ポイントをまとめた目安です。取引先の指定様式や契約条件がある場合はそちらを優先してください。</li>
@@ -215,7 +252,7 @@
 
   function isDoc() { var a = arguments; return function (s) { for (var i = 0; i < a.length; i++) if (s.doc === a[i]) return true; return false; }; }
   function all() { return true; }
-  var CALC = ["./index.html", "逆算電卓で金額を確認 →"];
+  var CALC = ["/", "逆算電卓で金額を確認 →"];
 
   var CATS = [["basic", "宛先・基本情報"], ["amount", "金額・内訳"], ["tax", "消費税・源泉徴収"], ["pay", "支払条件・振込先"], ["send", "送付前の最終確認"]];
   var ITEMS = [
@@ -399,5 +436,6 @@
   window.__inv = { ITEMS: ITEMS, QUESTIONS: QUESTIONS, visibleItems: visibleItems, data: function () { return data; } };
 })();
 </script>
+<script src="/site.js" defer></script>
 </body>
 </html>

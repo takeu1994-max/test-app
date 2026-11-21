@@ -4,10 +4,26 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0f766e">
-<meta name="description" content="月ごとの報酬と源泉徴収された金額の目安を入力して、年間合計や月ごとの流れをざっくり振り返れる無料メモツール。入力内容は端末内にのみ保存。">
-<title>年間収入 振り返りメモ</title>
+<meta name="description" content="月ごとの報酬・源泉徴収された額・経費の目安を入力して、年間合計や月ごとの流れをざっくり振り返れる無料メモツール。入力内容は端末内にのみ保存し、バックアップの書き出しにも対応。">
+<title>年間収入・経費 振り返りメモ</title>
+<link rel="canonical" href="https://test-app.kaikeilab.workers.dev/income-memo">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="請求・確定申告のかんたんツール">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="年間収入・経費 振り返りメモ">
+<meta property="og:description" content="月ごとの報酬・源泉徴収された額・経費の目安を入力して、年間合計や月ごとの流れをざっくり振り返れる無料メモツール。入力内容は端末内にのみ保存し、バックアップの書き出しにも対応。">
+<meta property="og:url" content="https://test-app.kaikeilab.workers.dev/income-memo">
+<meta property="og:image" content="https://test-app.kaikeilab.workers.dev/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/site.css">
 <style>
   :root {
+    --page-max: 1040px;
     --bg: #f3f5f4;
     --card: #ffffff;
     --text: #18201e;
@@ -119,13 +135,22 @@
   @media (prefers-color-scheme: dark) { .btn.primary { color: #0e1312; } }
   .btn.plain { background: var(--bg); color: var(--sub); }
   .btn:active { transform: scale(.98); }
+  .bk-status { font-size: .86rem; border-radius: 10px; padding: 10px 12px; background: var(--bg); color: var(--sub); }
+  .bk-status.warn { background: var(--warn-bg); border: 1px solid var(--warn-line); color: var(--warn-text); }
+  .bk-status.ok { background: var(--accent-soft); color: var(--accent); }
+  .btn.ghost { background: var(--accent-soft); color: var(--accent); }
+  .paste { margin-top: 10px; }
+  .paste textarea { width: 100%; min-height: 96px; border: 2px solid var(--line); border-radius: 12px; background: var(--card); color: var(--text); font: inherit; font-size: 16px; padding: 8px 10px; }
+  .paste textarea:focus { outline: none; border-color: var(--accent); }
+  .paste .btn { width: 100%; margin-top: 8px; }
   .calc-link { display: inline-flex; align-items: center; min-height: 44px; font-size: .85rem; font-weight: 700; margin-top: 4px; }
 
   /* 月別入力 */
   .months { list-style: none; display: grid; gap: 8px; }
-  .month { display: grid; grid-template-columns: 44px minmax(0, 1fr) minmax(0, 1fr); gap: 8px; align-items: end; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .month { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px 8px; align-items: end; padding: 8px 0 10px; border-bottom: 1px solid var(--line); }
+  @media (min-width: 480px) { .month { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
   .month:last-child { border-bottom: 0; }
-  .month .m { font-weight: 800; font-size: 1rem; padding-bottom: 12px; font-variant-numeric: tabular-nums; }
+  .month .m { grid-column: 1 / -1; font-weight: 800; font-size: 1rem; font-variant-numeric: tabular-nums; }
   .month label { display: block; font-size: .72rem; color: var(--sub); font-weight: 700; margin-bottom: 3px; }
   .money { position: relative; }
   .money input {
@@ -134,7 +159,7 @@
   }
   .money input:focus { outline: none; border-color: var(--accent); }
   .month.over .wh input { border-color: var(--warn-line); }
-  .month .flag { grid-column: 2 / -1; font-size: .74rem; color: var(--warn-text); }
+  .month .flag { grid-column: 1 / -1; font-size: .74rem; color: var(--warn-text); }
 
   .toast {
     position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(20px);
@@ -149,19 +174,15 @@
   @media (max-width: 380px) {
     body { padding-left: 12px; padding-right: 12px; }
     .card { padding: 14px; }
-    /* 狭い画面では月名を上に出して入力欄を広くする */
-    .month { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4px 8px; }
-    .month .m { grid-column: 1 / -1; padding-bottom: 0; }
-    .month .flag { grid-column: 1 / -1; }
     .actions { grid-template-columns: minmax(0, 1fr); }
   }
 </style>
 </head>
 <body>
-<div class="topbar"><a class="back" href="./tools.html">← ツール一覧へ</a></div>
+<div class="topbar"><a class="back" href="/tools">← ツール一覧へ</a></div>
 <header>
-  <h1>年間収入 振り返りメモ</h1>
-  <p>月ごとの報酬と、源泉徴収された金額の目安をメモして、1年の合計や流れをざっくり確認。</p>
+  <h1>年間収入・経費 振り返りメモ</h1>
+  <p>月ごとの報酬・源泉徴収された金額・経費の目安をメモして、1年の合計や流れをざっくり確認。</p>
 </header>
 <p class="notice"><b>目安・振り返り用のメモです。</b>税額を確定したり、申告が必要かどうかを判断したりするものではありません。</p>
 
@@ -178,7 +199,7 @@
         <button type="button" data-val="ex">税抜でメモ</button>
         <button type="button" data-val="in">税込でメモ</button>
       </div>
-      <p class="lead" style="margin:6px 0 0">どちらかに統一して入力すると振り返りやすくなります。</p>
+      <p class="lead" style="margin:6px 0 0">報酬と経費は、どちらかに統一して入力すると振り返りやすくなります。</p>
     </div>
 
     <div class="card" aria-live="polite">
@@ -189,7 +210,9 @@
       <table class="sum">
         <tbody>
           <tr><th>源泉徴収された額の合計（目安）</th><td id="totWh">0円</td></tr>
+          <tr><th>経費の合計（目安）</th><td id="totExp">0円</td></tr>
           <tr><th>差引（報酬 − 源泉徴収）</th><td id="totNet">0円</td></tr>
+          <tr><th>報酬 − 経費（目安）</th><td id="totProfit">0円</td></tr>
           <tr><th>入力した月</th><td id="filled">0 / 12 か月</td></tr>
           <tr><th>入力した月の報酬 平均</th><td id="avgInc">—</td></tr>
           <tr><th>報酬がいちばん多い月</th><td id="maxMonth">—</td></tr>
@@ -208,23 +231,66 @@
         <button type="button" class="btn primary" id="copyBtn">年間のまとめをコピー</button>
         <button type="button" class="btn plain" id="clearYear">この年の入力を消去</button>
       </div>
-      <a class="calc-link" href="./index.html">報酬から源泉徴収額の目安を出す（逆算電卓）→</a>
+      <a class="calc-link" href="/">報酬から源泉徴収額の目安を出す（逆算電卓）→</a>
     </div>
+
+    <div class="card" id="backupCard">
+      <h2>バックアップ</h2>
+      <p class="lead">記録はこの端末のブラウザ内だけに保存されています。ブラウザのデータ消去などで消えることがあるため、ときどき書き出して保存しておきましょう。別の端末へ移すときにも使えます。</p>
+      <p class="bk-status" id="bkStatus" role="status">まだ入力がありません。</p>
+      <div class="actions">
+        <button type="button" class="btn primary" id="exportFile">ファイルに書き出す</button>
+        <button type="button" class="btn ghost" id="exportCopy">テキストでコピー</button>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn plain" id="importFile">ファイルから読み込む</button>
+        <button type="button" class="btn plain" id="pasteToggle" aria-expanded="false" aria-controls="pasteBox">テキストを貼り付けて読み込む</button>
+      </div>
+      <input type="file" id="fileInput" accept=".json,application/json,text/plain" hidden>
+      <div class="paste" id="pasteBox" hidden>
+        <label class="label" for="pasteArea" style="margin-top:0">書き出したテキストを貼り付けてください</label>
+        <textarea id="pasteArea" spellcheck="false" autocomplete="off"></textarea>
+        <button type="button" class="btn primary" id="pasteApply">この内容で読み込む</button>
+      </div>
+    </div>
+
+    <div class="promo-box" data-product="p2" data-lead="iPhone・iPad・PCで同じデータを使いたい方、請求や入金状況まで管理したい方へ。Googleスプレッドシートなので、端末を変えても記録が残ります。"></div>
   </section>
 
   <section class="card">
     <h2>月ごとのメモ</h2>
-    <p class="lead">支払調書・入金記録・請求書の控えなどを見ながら、分かる範囲で入力してください。空欄の月は0円として合計します。</p>
+    <p class="lead">支払調書・入金記録・請求書の控え・レシートなどを見ながら、分かる範囲で入力してください。空欄の月は0円として合計します。</p>
     <ul class="months" id="months"></ul>
   </section>
 </div>
 
+<section class="site-section" aria-labelledby="howto-title">
+  <h2 id="howto-title">使い方</h2>
+  <ol class="howto">
+    <li>年を選び、月ごとに「報酬」「源泉徴収された額」「経費」を分かる範囲で入力します。</li>
+    <li>合計・平均・グラフで、1年の流れをざっくり確認します。</li>
+    <li>ときどき「バックアップ」でファイルに書き出しておくと、データが消えても元に戻せます。</li>
+  </ol>
+  <h2 class="sub-h" id="faq-title">よくある質問</h2>
+  <div class="faq">
+    <details><summary>入力したデータはどこに保存されますか？</summary><div class="a">この端末のブラウザ内だけに保存され、外部には送信されません。iPhoneとiPadなど別の端末とは共有されず、ブラウザのデータ消去や、長いあいだサイトを開かなかった場合などに消えることがあります。定期的にバックアップを書き出してください。</div></details>
+    <details><summary>別の端末にデータを移したいです。</summary><div class="a">「ファイルに書き出す」または「テキストでコピー」でバックアップを作り、移したい端末でこのページを開いて「ファイルから読み込む」または「テキストを貼り付けて読み込む」を使ってください。読み込むと、その端末の記録はバックアップの内容に置き換わります。</div></details>
+    <details><summary>合計や「報酬 − 経費」は、税額や所得の計算ですか？</summary><div class="a">いいえ。入力した数字を足し引きしただけの目安です。経費として扱えるかどうかなどの判断もしていません。確定申告については<a href="https://www.nta.go.jp/taxes/shiraberu/shinkoku/tokushu/index.htm" target="_blank" rel="noopener">国税庁 確定申告特集</a>や税理士等の専門家にご確認ください。</div></details>
+  </div>
+</section>
+
 <footer>
+  <ul class="site-links">
+    <li><a href="/tools">ツール一覧</a></li>
+    <li><a href="/about">このサイトについて</a></li>
+    <li><a href="/about#privacy">プライバシーポリシー</a></li>
+    <li><a href="/about#contact">お問い合わせ</a></li>
+  </ul>
   <p class="must">最終的な税額や申告内容は、税務署・国税庁などの公式情報、または税理士等の専門家にご確認ください。</p>
   <ul>
-    <li>このメモの合計は入力した数字を足し合わせただけの目安です。税額の計算や申告の要否の判断は行いません。</li>
+    <li>このメモの合計は入力した数字を足し引きしただけの目安です。税額の計算、経費に当たるかどうかや申告の要否の判断は行いません。</li>
     <li>実際の報酬額・源泉徴収税額は、請求書の控え・入金記録・取引先からの書類などで確認してください。</li>
-    <li>入力内容はこの端末のブラウザ内（localStorage）にのみ保存され、外部には送信されません。ブラウザのデータ消去で消えることがあります。</li>
+    <li>入力内容はこの端末のブラウザ内（localStorage）にのみ保存され、外部には送信されません。ブラウザのデータ消去で消えることがあるため、バックアップの書き出しをおすすめします。</li>
   </ul>
 </footer>
 
@@ -233,14 +299,15 @@
 <script>
 (function () {
   "use strict";
-  var STORE_KEY = "income-memo-v1";
+  var STORE_KEY = "income-memo-v1";   // 既存データをそのまま読めるようキー名は変えない
   var MAX = 9999999999;
   var MIN_YEAR = 2000, MAX_YEAR = 2100;
+  var KINDS = ["inc", "wh", "exp"];    // 報酬・源泉徴収・経費
 
   // 確定申告シーズン（1〜3月）は前年を初期表示
   var now = new Date();
   var defaultYear = now.getMonth() < 3 ? now.getFullYear() - 1 : now.getFullYear();
-  var data = { year: defaultYear, basis: "ex", years: {} };
+  var data = { year: defaultYear, basis: "ex", years: {}, lastBackup: 0, modifiedAt: 0 };
 
   var $ = function (id) { return document.getElementById(id); };
   function toInt(str) {
@@ -252,6 +319,7 @@
   }
   function fmt(n) { return n.toLocaleString("ja-JP"); }
   function yen(n) { return fmt(n) + "円"; }
+  function signedYen(n) { return (n < 0 ? "−" : "") + yen(Math.abs(n)); }
   function cleanArr(a) {
     var out = [];
     for (var i = 0; i < 12; i++) {
@@ -260,43 +328,57 @@
     }
     return out;
   }
+  function emptyYear() { return { inc: cleanArr([]), wh: cleanArr([]), exp: cleanArr([]) }; }
+  function cleanYear(v) { return { inc: cleanArr(v.inc), wh: cleanArr(v.wh), exp: cleanArr(v.exp) }; }
+  function isEmptyYear(v) { return KINDS.every(function (k) { return v[k].every(function (x) { return !x; }); }); }
+  function validTime(t) { return typeof t === "number" && isFinite(t) && t > 0 && t < 4102444800000 ? t : 0; }
+  // 保存データ・バックアップの年データを検証して取り出す（不正な値は無視）
+  function cleanYears(src) {
+    var out = {};
+    if (!src || typeof src !== "object") return out;
+    Object.keys(src).forEach(function (y) {
+      var yy = parseInt(y, 10), v = src[y];
+      if (String(yy) === String(y) && yy >= MIN_YEAR && yy <= MAX_YEAR && v && typeof v === "object") {
+        var c = cleanYear(v);
+        if (!isEmptyYear(c)) out[yy] = c;
+      }
+    });
+    return out;
+  }
+
   function load() {
     try {
       var d = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
       if (!d || typeof d !== "object") return;
       if (d.basis === "ex" || d.basis === "in") data.basis = d.basis;
       if (typeof d.year === "number" && d.year >= MIN_YEAR && d.year <= MAX_YEAR) data.year = Math.floor(d.year);
-      if (d.years && typeof d.years === "object") {
-        Object.keys(d.years).forEach(function (y) {
-          var yy = parseInt(y, 10), v = d.years[y];
-          if (yy >= MIN_YEAR && yy <= MAX_YEAR && v && typeof v === "object") data.years[yy] = { inc: cleanArr(v.inc), wh: cleanArr(v.wh) };
-        });
-      }
+      data.years = cleanYears(d.years);
+      data.lastBackup = validTime(d.lastBackup);
+      data.modifiedAt = validTime(d.modifiedAt);
     } catch (e) {}
   }
   function save() {
-    // 空の年は保存しない
-    Object.keys(data.years).forEach(function (y) {
-      var v = data.years[y];
-      if (v.inc.every(function (x) { return !x; }) && v.wh.every(function (x) { return !x; })) delete data.years[y];
-    });
+    Object.keys(data.years).forEach(function (y) { if (isEmptyYear(data.years[y])) delete data.years[y]; });
     try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) {}
   }
+  function touch() { data.modifiedAt = Date.now(); }
   function cur() {
-    if (!data.years[data.year]) data.years[data.year] = { inc: cleanArr([]), wh: cleanArr([]) };
+    if (!data.years[data.year]) data.years[data.year] = emptyYear();
     return data.years[data.year];
   }
+  function view() { return data.years[data.year] || emptyYear(); }
+  function hasAnyData() { return Object.keys(data.years).some(function (y) { return !isEmptyYear(data.years[y]); }); }
 
   // ---------- 月別入力 ----------
-  var incEls = [], whEls = [], rowEls = [], flagEls = [];
+  var els = { inc: [], wh: [], exp: [] }, rowEls = [], flagEls = [];
+  var LABELS = { inc: ["報酬", "報酬"], wh: ["源泉徴収", "源泉徴収された額"], exp: ["経費", "経費"] };
   function buildMonths() {
     var ul = $("months");
     for (var i = 0; i < 12; i++) {
       var li = document.createElement("li"); li.className = "month";
       var m = document.createElement("div"); m.className = "m"; m.textContent = (i + 1) + "月";
       li.appendChild(m);
-      li.appendChild(field("inc" + i, "報酬", "inc", i));
-      li.appendChild(field("wh" + i, "源泉徴収された額", "wh", i));
+      KINDS.forEach(function (k) { li.appendChild(field(k + i, k, i)); });
       var flag = document.createElement("div"); flag.className = "flag"; flag.hidden = true;
       flag.textContent = "源泉徴収の額が報酬を上回っています。入力を確認してください。";
       li.appendChild(flag);
@@ -304,20 +386,20 @@
       rowEls.push(li); flagEls.push(flag);
     }
   }
-  function field(id, label, kind, i) {
+  function field(id, kind, i) {
     var wrap = document.createElement("div"); wrap.className = kind;
-    var lab = document.createElement("label"); lab.setAttribute("for", id); lab.textContent = label + "（円）";
+    var lab = document.createElement("label"); lab.setAttribute("for", id); lab.textContent = LABELS[kind][0] + "（円）";
     var box = document.createElement("div"); box.className = "money";
     var inp = document.createElement("input");
     inp.id = id; inp.type = "text"; inp.setAttribute("inputmode", "numeric"); inp.autocomplete = "off"; inp.placeholder = "0";
-    inp.setAttribute("aria-label", (i + 1) + "月の" + label);
+    inp.setAttribute("aria-label", (i + 1) + "月の" + LABELS[kind][1]);
     box.appendChild(inp);
     wrap.appendChild(lab); wrap.appendChild(box);
-    (kind === "inc" ? incEls : whEls).push(inp);
+    els[kind].push(inp);
     inp.addEventListener("input", function () {
       reformat(inp);
       cur()[kind][i] = toInt(inp.value);
-      save(); renderSummary(); renderFlags();
+      touch(); save(); renderAll();
     });
     inp.addEventListener("focus", function () { setTimeout(function () { try { inp.select(); } catch (e) {} }, 0); });
     return wrap;
@@ -334,14 +416,11 @@
     try { el.setSelectionRange(pos, pos); } catch (e) {}
   }
   function fillInputs() {
-    var y = data.years[data.year] || { inc: cleanArr([]), wh: cleanArr([]) };
-    for (var i = 0; i < 12; i++) {
-      incEls[i].value = y.inc[i] ? fmt(y.inc[i]) : "";
-      whEls[i].value = y.wh[i] ? fmt(y.wh[i]) : "";
-    }
+    var y = view();
+    for (var i = 0; i < 12; i++) KINDS.forEach(function (k) { els[k][i].value = y[k][i] ? fmt(y[k][i]) : ""; });
   }
   function renderFlags() {
-    var y = data.years[data.year] || { inc: cleanArr([]), wh: cleanArr([]) };
+    var y = view();
     for (var i = 0; i < 12; i++) {
       var over = y.wh[i] > y.inc[i];
       flagEls[i].hidden = !over;
@@ -352,16 +431,17 @@
   // ---------- 合計・グラフ ----------
   var selMonth = -1;
   function stats() {
-    var y = data.years[data.year] || { inc: cleanArr([]), wh: cleanArr([]) };
-    var inc = 0, wh = 0, filled = 0, maxI = -1, over = [];
+    var y = view();
+    var inc = 0, wh = 0, exp = 0, filled = 0, maxI = -1, over = [];
     for (var i = 0; i < 12; i++) {
-      inc += y.inc[i]; wh += y.wh[i];
-      if (y.inc[i] || y.wh[i]) filled++;
+      inc += y.inc[i]; wh += y.wh[i]; exp += y.exp[i];
+      if (y.inc[i] || y.wh[i] || y.exp[i]) filled++;
       if (y.inc[i] && (maxI < 0 || y.inc[i] > y.inc[maxI])) maxI = i;
       if (y.wh[i] > y.inc[i]) over.push(i + 1);
     }
     var incMonths = y.inc.filter(function (x) { return x > 0; }).length;
-    return { y: y, inc: inc, wh: wh, net: inc - wh, filled: filled, maxI: maxI, avg: incMonths ? Math.round(inc / incMonths) : 0, incMonths: incMonths, over: over };
+    return { y: y, inc: inc, wh: wh, exp: exp, net: inc - wh, profit: inc - exp, filled: filled, maxI: maxI,
+      avg: incMonths ? Math.round(inc / incMonths) : 0, incMonths: incMonths, over: over };
   }
   function renderSummary() {
     var s = stats();
@@ -371,7 +451,9 @@
     $("basisCap").textContent = basisName;
     $("totInc").textContent = fmt(s.inc);
     $("totWh").textContent = yen(s.wh);
-    $("totNet").textContent = (s.net < 0 ? "−" : "") + yen(Math.abs(s.net));
+    $("totExp").textContent = yen(s.exp);
+    $("totNet").textContent = signedYen(s.net);
+    $("totProfit").textContent = signedYen(s.profit);
     $("filled").textContent = s.filled + " / 12 か月";
     $("avgInc").textContent = s.incMonths ? yen(s.avg) : "—";
     $("maxMonth").textContent = s.maxI >= 0 ? (s.maxI + 1) + "月（" + yen(s.y.inc[s.maxI]) + "）" : "—";
@@ -418,24 +500,122 @@
       c.classList.toggle("zero", !v);
       c.firstChild.style.height = top && v ? Math.max(2, v / top * 100) + "%" : "2px";
       c.setAttribute("aria-pressed", String(selMonth === i));
-      c.setAttribute("aria-label", (i + 1) + "月 報酬 " + yen(v) + "、源泉徴収 " + yen(s.y.wh[i]));
+      c.setAttribute("aria-label", (i + 1) + "月 報酬 " + yen(v) + "、源泉徴収 " + yen(s.y.wh[i]) + "、経費 " + yen(s.y.exp[i]));
     }
     showTip(selMonth);
   }
   function showTip(i) {
     var tip = $("tip");
     if (i < 0) { tip.textContent = "棒をタップすると、その月の金額を表示します。"; return; }
-    var y = data.years[data.year] || { inc: cleanArr([]), wh: cleanArr([]) };
+    var y = view();
     tip.innerHTML = "";
     var b = document.createElement("b"); b.textContent = (i + 1) + "月";
     tip.appendChild(b);
-    tip.appendChild(document.createTextNode("　報酬 " + yen(y.inc[i]) + "　／　源泉徴収 " + yen(y.wh[i])));
+    tip.appendChild(document.createTextNode("　報酬 " + yen(y.inc[i]) + "　／　源泉徴収 " + yen(y.wh[i]) + "　／　経費 " + yen(y.exp[i])));
   }
+
+  // ---------- バックアップ ----------
+  function fmtDate(t) { var d = new Date(t); return d.getFullYear() + "/" + (d.getMonth() + 1) + "/" + d.getDate(); }
+  function daysAgo(t) {
+    var a = new Date(t), b = new Date();
+    var d0 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate()), d1 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+    var n = Math.max(0, Math.round((d1 - d0) / 86400000));
+    return n === 0 ? "今日" : n + "日前";
+  }
+  function renderBackup() {
+    var el = $("bkStatus"), has = hasAnyData();
+    var cls = "", msg;
+    if (!has && !data.lastBackup) {
+      msg = "まだ入力がありません。";
+    } else if (!data.lastBackup) {
+      cls = "warn"; msg = "まだバックアップしていません。記録が消えたときに備えて、書き出して保存しておきましょう。";
+    } else {
+      msg = "最終バックアップ：" + fmtDate(data.lastBackup) + "（" + daysAgo(data.lastBackup) + "）";
+      if (data.modifiedAt > data.lastBackup) { cls = "warn"; msg += "。その後に入力が変更されています。もう一度書き出しておくと安心です。"; }
+      else if (Date.now() - data.lastBackup > 30 * 86400000) { cls = "warn"; msg += "。1か月以上たっています。"; }
+      else cls = "ok";
+    }
+    el.className = "bk-status" + (cls ? " " + cls : "");
+    el.textContent = msg;
+  }
+  function backupPayload() {
+    return { app: "income-memo", version: 2, exportedAt: new Date().toISOString(), basis: data.basis, years: data.years };
+  }
+  function markBackedUp() { data.lastBackup = Date.now(); if (data.modifiedAt > data.lastBackup) data.modifiedAt = data.lastBackup; save(); renderBackup(); }
+  $("exportFile").addEventListener("click", function () {
+    if (!hasAnyData()) { toast("書き出す記録がありません"); return; }
+    var text = JSON.stringify(backupPayload(), null, 1);
+    var d = new Date();
+    var name = "income-memo-backup-" + d.getFullYear() + String(d.getMonth() + 1).padStart(2, "0") + String(d.getDate()).padStart(2, "0") + ".json";
+    try {
+      var blob = new Blob([text], { type: "application/json" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url; a.download = name; a.rel = "noopener";
+      document.body.appendChild(a); a.click(); document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+      markBackedUp();
+      toast("バックアップを書き出しました");
+    } catch (e) {
+      toast("書き出せませんでした。「テキストでコピー」をお試しください");
+    }
+  });
+  $("exportCopy").addEventListener("click", function () {
+    if (!hasAnyData()) { toast("書き出す記録がありません"); return; }
+    copyText(JSON.stringify(backupPayload())).then(function () {
+      markBackedUp();
+      toast("コピーしました。メモアプリなどに貼って保存してください");
+    }, function () { toast("コピーできませんでした"); });
+  });
+  // バックアップの読み込み（ファイル・貼り付け共通）
+  function importText(text) {
+    var d;
+    try { d = JSON.parse(String(text || "").trim()); } catch (e) { toast("読み込めませんでした（形式が違います）"); return false; }
+    if (!d || typeof d !== "object" || (d.app && d.app !== "income-memo") || !d.years || typeof d.years !== "object") {
+      toast("このツールのバックアップではないようです"); return false;
+    }
+    var years = cleanYears(d.years), ys = Object.keys(years).sort();
+    if (!ys.length) { toast("バックアップに記録が入っていません"); return false; }
+    var mine = Object.keys(data.years).length;
+    var msg = "バックアップ（" + ys.join("・") + "年の記録）を読み込みます。";
+    msg += mine ? "\nこの端末にある記録（" + mine + "年分）は、バックアップの内容に置き換わります。よろしいですか？" : "よろしいですか？";
+    if (!confirm(msg)) return false;
+    data.years = years;
+    if (d.basis === "ex" || d.basis === "in") data.basis = d.basis;
+    if (!data.years[data.year]) data.year = parseInt(ys[ys.length - 1], 10);
+    var t = Date.parse(d.exportedAt);
+    data.lastBackup = validTime(t) || Date.now();
+    data.modifiedAt = data.lastBackup;
+    selMonth = -1;
+    save(); fillInputs(); renderAll();
+    toast("バックアップを読み込みました");
+    return true;
+  }
+  $("importFile").addEventListener("click", function () { $("fileInput").click(); });
+  $("fileInput").addEventListener("change", function () {
+    var f = this.files && this.files[0];
+    this.value = "";
+    if (!f) return;
+    if (f.size > 2000000) { toast("ファイルが大きすぎます"); return; }
+    var r = new FileReader();
+    r.onload = function () { importText(r.result); };
+    r.onerror = function () { toast("ファイルを読み込めませんでした"); };
+    r.readAsText(f);
+  });
+  $("pasteToggle").addEventListener("click", function () {
+    var box = $("pasteBox"), open = box.hidden;
+    box.hidden = !open;
+    this.setAttribute("aria-expanded", String(open));
+    if (open) $("pasteArea").focus();
+  });
+  $("pasteApply").addEventListener("click", function () {
+    if (importText($("pasteArea").value)) { $("pasteArea").value = ""; $("pasteBox").hidden = true; $("pasteToggle").setAttribute("aria-expanded", "false"); }
+  });
 
   // ---------- 操作 ----------
   function toast(msg) {
     var el = $("toast"); el.textContent = msg; el.classList.add("show");
-    clearTimeout(toast._t); toast._t = setTimeout(function () { el.classList.remove("show"); }, 1600);
+    clearTimeout(toast._t); toast._t = setTimeout(function () { el.classList.remove("show"); }, 2200);
   }
   function copyText(text) {
     if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
@@ -447,33 +627,37 @@
       document.body.removeChild(ta); ok ? resolve() : reject();
     });
   }
+  function renderAll() { renderFlags(); renderSummary(); renderBackup(); }
   function changeYear(d) {
     var ny = data.year + d;
     if (ny < MIN_YEAR || ny > MAX_YEAR) return;
     data.year = ny; selMonth = -1;
-    save(); fillInputs(); renderFlags(); renderSummary();
+    save(); fillInputs(); renderAll();
   }
   $("prevYear").addEventListener("click", function () { changeYear(-1); });
   $("nextYear").addEventListener("click", function () { changeYear(1); });
   $("basisSeg").addEventListener("click", function (e) {
     var b = e.target.closest("button"); if (!b) return;
-    data.basis = b.getAttribute("data-val"); save(); renderSummary();
+    var v = b.getAttribute("data-val");
+    if (v === data.basis) return;
+    data.basis = v; touch(); save(); renderAll();
   });
   $("copyBtn").addEventListener("click", function () {
     var s = stats();
     if (!s.filled) { toast("まだ入力がありません"); return; }
     var basisName = data.basis === "in" ? "税込" : "税抜";
-    var lines = ["【" + data.year + "年 収入の振り返りメモ（目安）】", "報酬は" + basisName + "で記録", ""];
-    for (var i = 0; i < 12; i++) lines.push((i + 1) + "月：報酬 " + yen(s.y.inc[i]) + " ／ 源泉徴収 " + yen(s.y.wh[i]));
-    lines.push("", "報酬合計：" + yen(s.inc), "源泉徴収 合計：" + yen(s.wh), "差引：" + (s.net < 0 ? "−" : "") + yen(Math.abs(s.net)));
-    lines.push("※入力値を合計した目安です。最終的な税額や申告内容は公式情報・専門家にご確認ください。");
+    var lines = ["【" + data.year + "年 収入・経費の振り返りメモ（目安）】", "報酬・経費は" + basisName + "で記録", ""];
+    for (var i = 0; i < 12; i++) lines.push((i + 1) + "月：報酬 " + yen(s.y.inc[i]) + " ／ 源泉徴収 " + yen(s.y.wh[i]) + " ／ 経費 " + yen(s.y.exp[i]));
+    lines.push("", "報酬合計：" + yen(s.inc), "源泉徴収 合計：" + yen(s.wh), "経費 合計：" + yen(s.exp),
+      "差引（報酬−源泉徴収）：" + signedYen(s.net), "報酬−経費：" + signedYen(s.profit));
+    lines.push("※入力値を足し引きした目安です。最終的な税額や申告内容は公式情報・専門家にご確認ください。");
     copyText(lines.join("\n")).then(function () { toast("年間のまとめをコピーしました"); }, function () { toast("コピーできませんでした"); });
   });
   $("clearYear").addEventListener("click", function () {
     if (!stats().filled) { toast("消去する入力はありません"); return; }
     if (!confirm(data.year + "年の入力をすべて消去しますか？（ほかの年はそのまま）")) return;
     delete data.years[data.year]; selMonth = -1;
-    save(); fillInputs(); renderFlags(); renderSummary();
+    touch(); save(); fillInputs(); renderAll();
     toast(data.year + "年の入力を消去しました");
   });
 
@@ -481,10 +665,10 @@
   buildMonths();
   buildChart();
   fillInputs();
-  renderFlags();
-  renderSummary();
-  window.__memo = { stats: stats, data: function () { return data; }, toInt: toInt, niceMax: niceMax };
+  renderAll();
+  window.__memo = { stats: stats, data: function () { return data; }, toInt: toInt, niceMax: niceMax, importText: importText };
 })();
 </script>
+<script src="/site.js" defer></script>
 </body>
 </html>

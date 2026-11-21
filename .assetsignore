@@ -1,0 +1,4 @@
+# サイトとして公開しないファイル
+wrangler.jsonc
+README.md
+.assetsignore

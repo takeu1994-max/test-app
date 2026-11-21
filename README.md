@@ -25,7 +25,19 @@
 - タップで確認済み切替、進捗表示、未確認のコピー、取引先メモ、「次の書類へ」で毎回リセットして使える
 - 記載要件や税務・契約上の判断は行わない見直し用リスト。データは端末内（localStorage）のみ
 
-## 4. 年間収入 振り返りメモ（`income-memo.html`）
-- 月ごとの報酬・源泉徴収された額の目安を入力し、年間合計・差引・平均・最多月と月別の棒グラフを表示
+## 4. 年間収入・経費 振り返りメモ（`income-memo.html`）
+- 月ごとの報酬・源泉徴収された額・経費の目安を入力し、年間合計・差引・報酬−経費・平均・最多月と月別の棒グラフを表示
+- バックアップの書き出し（JSONファイル／テキストコピー）と読み込み（ファイル／貼り付け）、最終バックアップ日の表示
 - 年ごとに記録（1〜3月は前年を初期表示）、報酬の記録方法（税抜／税込）、年間まとめのコピー
 - 税額の確定や申告要否の判断は行わない目安メモ。データは端末内（localStorage）のみ
+
+## サイト共通の仕組み
+- 公開：Cloudflare Workers（`https://test-app.kaikeilab.workers.dev`）。`main` へのプッシュで自動デプロイ
+  - `wrangler.jsonc`：Cloudflareが自動生成していた設定と同じ内容に、`not_found_handling: "404-page"`（存在しないURLで `404.html` を返す）を追加
+  - `.assetsignore`：`wrangler.jsonc`・`README.md` を公開しない
+- URLは拡張子なしが正式（例：`/tools`）。`.html` 付きは自動で転送される。サイト内リンクも拡張子なしに統一
+- SEO：各ページに canonical・OGP（`og-image.png`）・アイコン（`favicon.ico` / `favicon.svg` / `apple-touch-icon.png`）。`sitemap.xml`・`robots.txt`
+- `about.html`：運営者情報・免責事項・プライバシーポリシー・お問い合わせ・国税庁リンク
+- `site.css`：使い方・FAQ、有料商品の案内枠、フッターリンクの共通スタイル
+- **`site.js`：販売ページのURL（`PRODUCTS`）とお問い合わせフォームのURL（`SITE.contactUrl`）はここだけ書き換えれば全ページに反映**（空欄のあいだは「準備中」表示）
+- ページを追加したら `sitemap.xml` にも追記する

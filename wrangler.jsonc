@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "test-app",
+  "compatibility_date": "2026-11-19",
+  "observability": {
+    "enabled": true
+  },
+  "assets": {
+    "directory": ".",
+    // 存在しないURLには 404.html を返す（それ以外は自動生成されていた設定と同じ）
+    "not_found_handling": "404-page"
+  }
+}

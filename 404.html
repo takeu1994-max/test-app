@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<meta name="robots" content="noindex">
+<title>ページが見つかりません</title>
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<style>
+  :root { --bg: #f3f5f4; --card: #ffffff; --text: #18201e; --sub: #5b6664; --line: #dfe5e3; --accent: #0f766e; --accent-soft: #e3f3f1; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #0e1312; --card: #18201e; --text: #eef3f2; --sub: #9aa8a5; --line: #2a3533; --accent: #2dd4bf; --accent-soft: #123532; }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.7; min-height: 100vh;
+    display: flex; align-items: center; justify-content: center; padding: 24px 16px;
+  }
+  main { max-width: 480px; width: 100%; background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 28px 20px; text-align: center; }
+  .code { font-size: .85rem; font-weight: 800; color: var(--accent); letter-spacing: .1em; }
+  h1 { font-size: 1.25rem; margin-top: 4px; }
+  p { color: var(--sub); font-size: .9rem; margin-top: 8px; }
+  .btns { display: grid; gap: 8px; margin-top: 20px; }
+  .btns a { display: flex; align-items: center; justify-content: center; min-height: 48px; border-radius: 12px; font-weight: 700; text-decoration: none; }
+  .primary { background: var(--accent); color: #fff; }
+  @media (prefers-color-scheme: dark) { .primary { color: #0e1312; } }
+  .ghost { background: var(--accent-soft); color: var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <div class="code">404</div>
+  <h1>ページが見つかりませんでした</h1>
+  <p>URLが変わったか、ページが削除された可能性があります。ツール一覧から目的のツールをお探しください。</p>
+  <div class="btns">
+    <a class="primary" href="/tools">ツール一覧へ</a>
+    <a class="ghost" href="/">請求額 逆算電卓を開く</a>
+  </div>
+</main>
+</body>
+</html>

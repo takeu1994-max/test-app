@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://test-app.kaikeilab.workers.dev/sitemap.xml

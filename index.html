@@ -7,8 +7,24 @@
 <meta name="google-site-verification" content="29AXkTcW_plHHTxzrz6V1L3mPrGlWEqQ3Caj-TuU4uw" />
 <meta name="description" content="フリーランス・個人事業主向け。報酬額から消費税・源泉徴収税・振込額を計算、または欲しい手取り額から請求額を逆算できる無料ツール。">
 <title>源泉徴収・請求額 逆算電卓</title>
+<link rel="canonical" href="https://test-app.kaikeilab.workers.dev/">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="請求・確定申告のかんたんツール">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="源泉徴収・請求額 逆算電卓">
+<meta property="og:description" content="フリーランス・個人事業主向け。報酬額から消費税・源泉徴収税・振込額を計算、または欲しい手取り額から請求額を逆算できる無料ツール。">
+<meta property="og:url" content="https://test-app.kaikeilab.workers.dev/">
+<meta property="og:image" content="https://test-app.kaikeilab.workers.dev/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/site.css">
 <style>
   :root {
+    --page-max: 960px;
     --bg: #f3f5f4;
     --card: #ffffff;
     --text: #18201e;
@@ -113,7 +129,7 @@
   .quick button:active, .seg button:active { transform: scale(.97); }
 
   details.adv { margin-top: 18px; border-top: 1px solid var(--line); padding-top: 12px; }
-  details.adv summary { cursor: pointer; font-weight: 700; color: var(--accent); min-height: 40px; display: flex; align-items: center; list-style: none; }
+  details.adv summary { cursor: pointer; font-weight: 700; color: var(--accent); min-height: 44px; display: flex; align-items: center; list-style: none; }
   details.adv summary::-webkit-details-marker { display: none; }
   details.adv summary::before { content: "＋"; margin-right: 6px; }
   details.adv[open] summary::before { content: "−"; }
@@ -173,7 +189,7 @@
 </style>
 </head>
 <body>
-<div class="topbar"><a class="back" href="./tools.html">← ツール一覧へ</a></div>
+<div class="topbar"><a class="back" href="/tools">← ツール一覧へ</a></div>
 <header>
   <h1>源泉徴収・請求額 逆算電卓</h1>
   <p>フリーランス・個人事業主の請求書づくりに。消費税・源泉徴収税・振込額を一発計算。</p>
@@ -276,6 +292,8 @@
       </div>
     </div>
 
+    <aside class="promo-box" data-product="p1" data-lead="この計算（消費税・源泉徴収・差引の請求額）が自動で入る請求書・見積書テンプレート。毎回の計算と書き写しの手間を減らせます。"></aside>
+
     <div class="card hist">
       <h2>計算履歴 <button type="button" id="clearHist">すべて削除</button></h2>
       <ul id="histList"></ul>
@@ -284,7 +302,28 @@
   </section>
 </div>
 
+<section class="site-section" aria-labelledby="howto-title">
+  <h2 id="howto-title">使い方</h2>
+  <ol class="howto">
+    <li>「報酬 → 手取り」なら税抜の報酬額を、「手取り → 報酬」なら振り込んでほしい金額を入力します。</li>
+    <li>消費税と源泉徴収の「あり／なし」を選びます。源泉徴収の対象額や振込手数料は「詳細設定」で変えられます。</li>
+    <li>結果の「内訳をコピー」で、請求書やメールにそのまま貼り付けられます。</li>
+  </ol>
+  <h2 class="sub-h" id="faq-title">よくある質問</h2>
+  <div class="faq">
+    <details><summary>源泉徴収の「10.21%」とは何ですか？</summary><div class="a">所得税と復興特別所得税を合わせた率です。1回の支払いが100万円を超える部分は20.42%で計算します。なお国税庁から、令和9年（2027年）分以後は税の区分が変わると案内されています。最新の扱いは<a href="https://www.nta.go.jp/taxes/shiraberu/taxanswer/gensen/2795.htm" target="_blank" rel="noopener">国税庁 No.2795 原稿料や講演料等を支払ったとき</a>などでご確認ください。</div></details>
+    <details><summary>源泉徴収は税抜・税込どちらの金額にかかりますか？</summary><div class="a">請求書などで消費税額がはっきり分けて書かれている場合は、税抜の報酬額を対象にできるとされています。分けていない場合は税込の金額が対象です。取引先の計算方法とあわせてご確認ください（「詳細設定」で切り替えられます）。</div></details>
+    <details><summary>入力した金額は保存・送信されますか？</summary><div class="a">金額はどこにも送信されません。設定と、「履歴に保存」を押した計算だけが、この端末のブラウザ内に保存されます。</div></details>
+  </div>
+</section>
+
 <footer>
+  <ul class="site-links">
+    <li><a href="/tools">ツール一覧</a></li>
+    <li><a href="/about">このサイトについて</a></li>
+    <li><a href="/about#privacy">プライバシーポリシー</a></li>
+    <li><a href="/about#contact">お問い合わせ</a></li>
+  </ul>
   <ul>
     <li>源泉徴収税率は復興特別所得税を含む 10.21%（1回の支払いが100万円超の部分は 20.42%）で計算しています（所得税法204条1項1号等の報酬・料金の場合）。</li>
     <li>源泉徴収税額の1円未満は切り捨てです。</li>
@@ -619,5 +658,6 @@
   window.__whCalc = { forward: forward, reverse: reverse, calcWithholding: calcWithholding, calcTax: calcTax, toInt: toInt };
 })();
 </script>
+<script src="/site.js" defer></script>
 </body>
 </html>

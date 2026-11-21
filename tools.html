@@ -6,8 +6,24 @@
 <meta name="theme-color" content="#0f766e">
 <meta name="description" content="フリーランス・副業・経理初心者の方向けの無料ツール集。請求額の計算、請求書の書き忘れチェック、収入の振り返り、確定申告の準備チェックをスマホでかんたんに。登録不要・入力内容は外部に送信しません。">
 <title>請求・確定申告のかんたんツール</title>
+<link rel="canonical" href="https://test-app.kaikeilab.workers.dev/tools">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="請求・確定申告のかんたんツール">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:title" content="請求・確定申告のかんたんツール">
+<meta property="og:description" content="フリーランス・副業・経理初心者の方向けの無料ツール集。請求額の計算、請求書の書き忘れチェック、収入の振り返り、確定申告の準備チェックをスマホでかんたんに。登録不要・入力内容は外部に送信しません。">
+<meta property="og:url" content="https://test-app.kaikeilab.workers.dev/tools">
+<meta property="og:image" content="https://test-app.kaikeilab.workers.dev/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/site.css">
 <style>
   :root {
+    --page-max: 880px;
     --bg: #f3f5f4;
     --card: #ffffff;
     --text: #18201e;
@@ -123,14 +139,14 @@
       href・アイコン文字・タグ・名前・説明・ポイント・ボタン文言を書き換えるだけです。
       新しいグループが必要なら <section class="tool-group"> ごとコピーしてください。
       新しいツールのページには、上部に次の「戻るリンク」を入れてください：
-        <div class="topbar"><a class="back" href="./tools.html">← ツール一覧へ</a></div>
+        <div class="topbar"><a class="back" href="/tools">← ツール一覧へ</a></div>
     -->
     <section class="tool-group" aria-labelledby="g-billing">
       <h2 id="g-billing">毎月の請求・報酬</h2>
       <p class="group-lead">請求書をつくるとき・送る前に</p>
       <ul class="tool-list">
       <li>
-        <a class="tool" href="./index.html">
+        <a class="tool" href="/">
           <span class="top">
             <span class="icon" aria-hidden="true">¥</span>
             <span><span class="tag">請求書をつくるときに</span><span class="name">源泉徴収・請求額 逆算電卓</span></span>
@@ -145,7 +161,7 @@
         </a>
       </li>
       <li>
-        <a class="tool" href="./invoice-check.html">
+        <a class="tool" href="/invoice-check">
           <span class="top">
             <span class="icon" aria-hidden="true">書</span>
             <span><span class="tag">送る前の見直しに</span><span class="name">請求書 記載漏れチェッカー</span></span>
@@ -167,22 +183,22 @@
       <p class="group-lead">1年のふり返りから、申告の準備まで</p>
       <ul class="tool-list">
       <li>
-        <a class="tool" href="./income-memo.html">
+        <a class="tool" href="/income-memo">
           <span class="top">
             <span class="icon" aria-hidden="true">年</span>
-            <span><span class="tag">1年の振り返りに</span><span class="name">年間収入 振り返りメモ</span></span>
+            <span><span class="tag">1年の振り返りに</span><span class="name">年間収入・経費 振り返りメモ</span></span>
           </span>
-          <span class="desc">毎月の報酬と、差し引かれた税金（源泉徴収）の金額をメモするだけ。1年の合計や、収入の多い月・少ない月がひと目で分かります。</span>
+          <span class="desc">毎月の報酬と、差し引かれた税金（源泉徴収）、経費の金額をメモするだけ。1年の合計や、収入の多い月・少ない月がひと目で分かります。</span>
           <ul class="points">
-            <li>合計や平均は自動で計算</li>
-            <li>月ごとの流れを棒グラフで確認</li>
+            <li>合計や平均は自動で計算、月ごとの流れを棒グラフで確認</li>
             <li>年ごとに記録でき、まとめをコピーできる</li>
+            <li>バックアップを書き出して、データ消失や端末の買い替えに備えられる</li>
           </ul>
           <span class="go"><span>メモを開く</span></span>
         </a>
       </li>
       <li>
-        <a class="tool" href="./checklist.html">
+        <a class="tool" href="/checklist">
           <span class="top">
             <span class="icon" aria-hidden="true">✓</span>
             <span><span class="tag">確定申告の準備に</span><span class="name">確定申告 準備・抜け漏れチェッカー</span></span>
@@ -198,6 +214,8 @@
       </li>
       </ul>
     </section>
+
+    <aside class="promo-box" data-product="p3" data-lead="請求書テンプレート・請求と入金の管理シート・印刷用チェックシートをまとめたセット。ツールとあわせて使うと、毎月の事務がさらにラクになります。"></aside>
 
     <!-- ===== 案内エリア（プレースホルダー） =====
          各 <a class="slot"> の href・タイトル・説明を差し替えて使ってください。
@@ -227,11 +245,18 @@
   </main>
 
   <footer>
+  <ul class="site-links">
+    <li><a href="/tools">ツール一覧</a></li>
+    <li><a href="/about">このサイトについて</a></li>
+    <li><a href="/about#privacy">プライバシーポリシー</a></li>
+    <li><a href="/about#contact">お問い合わせ</a></li>
+  </ul>
     <ul>
       <li>各ツールは計算や準備の目安としてお使いください。最終的な判断や申告内容・税額は、国税庁などの公式情報や税理士等の専門家にご確認ください。</li>
       <li>入力内容はサーバーに送信されません。保存が必要なデータは、お使いの端末のブラウザ内にのみ保存されます。</li>
     </ul>
   </footer>
 </div>
+<script src="/site.js" defer></script>
 </body>
 </html>

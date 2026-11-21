@@ -1,0 +1,54 @@
+/* =====================================================
+   全ページ共通の部品（使い方・FAQ／有料商品の案内枠／フッターリンク）
+   色は各ページの :root にある --card --text --sub --line --accent --accent-soft を使います。
+   ===================================================== */
+
+/* 使い方・よくある質問 */
+.site-section {
+  max-width: var(--page-max, 1040px); margin: 16px auto 0;
+  background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px;
+}
+.site-section h2 { font-size: 1.05rem; margin: 0 0 8px; color: var(--text); }
+.site-section h2 + * { margin-top: 0; }
+.site-section .sub-h { margin-top: 18px; }
+.howto { margin: 0 0 0 1.4em; padding: 0; display: grid; gap: 6px; font-size: .9rem; }
+.howto li { padding-left: 2px; }
+.faq { display: grid; gap: 8px; }
+.faq details { border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+.faq summary {
+  cursor: pointer; list-style: none; min-height: 48px; padding: 12px 40px 12px 14px; position: relative;
+  font-weight: 700; font-size: .92rem; display: flex; align-items: center;
+}
+.faq summary::-webkit-details-marker { display: none; }
+.faq summary::before { content: "Q"; color: var(--accent); font-weight: 800; margin-right: 8px; }
+.faq summary::after { content: "＋"; position: absolute; right: 14px; color: var(--sub); }
+.faq details[open] summary::after { content: "−"; }
+.faq .a { padding: 0 14px 14px 32px; font-size: .86rem; color: var(--sub); line-height: 1.7; }
+.faq .a a, .site-section a { color: var(--accent); font-weight: 600; }
+.official { margin-top: 12px; font-size: .8rem; color: var(--sub); }
+
+/* 有料商品の控えめな案内枠（中身は site.js が描画） */
+.promo-box {
+  display: block; margin-top: 16px; border: 1.5px dashed var(--line); border-radius: 14px;
+  padding: 14px; background: var(--card); color: var(--text);
+}
+.promo-box:empty { display: none; }
+.promo-box .promo-tag { display: inline-block; font-size: .7rem; font-weight: 700; color: var(--sub); background: var(--bg, #f3f5f4); border-radius: 6px; padding: 1px 6px; }
+.promo-box b { display: block; font-size: .95rem; margin-top: 6px; }
+.promo-box p { font-size: .82rem; color: var(--sub); margin: 4px 0 0; }
+.promo-box .promo-btn {
+  display: flex; align-items: center; justify-content: center; min-height: 44px; margin-top: 10px;
+  border-radius: 12px; background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: .88rem; text-decoration: none;
+}
+.promo-box .promo-btn.off { color: var(--sub); background: var(--bg, #f3f5f4); }
+.promo-box .promo-note { font-size: .72rem; color: var(--sub); margin-top: 6px; }
+.site-section > .promo-box:first-child { margin-top: 0; }
+
+/* フッターのサイト内リンク */
+.site-links { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 0 0 10px; padding: 0; list-style: none; }
+.site-links a { display: inline-flex; align-items: center; min-height: 44px; color: var(--sub); font-weight: 700; font-size: .8rem; }
+
+@media (max-width: 380px) {
+  .site-section { padding: 14px; }
+}
+.site-links li { margin: 0; }
