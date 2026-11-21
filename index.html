@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>プロフィール</title>
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --card: #ffffff;
+      --text: #1d1d1f;
+      --sub: #6e6e73;
+      --accent: #0a84ff;
+      --border: #e5e5ea;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #000000;
+        --card: #1c1c1e;
+        --text: #f5f5f7;
+        --sub: #a1a1a6;
+        --border: #2c2c2e;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+      padding: 48px 16px;
+    }
+    main { max-width: 480px; margin: 0 auto; text-align: center; }
+    .avatar {
+      width: 96px; height: 96px; border-radius: 50%;
+      margin: 0 auto 16px;
+      background: linear-gradient(135deg, #0a84ff, #5e5ce6);
+      color: #fff; font-size: 40px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+    h1 { font-size: 1.5rem; margin-bottom: 4px; }
+    .bio { color: var(--sub); font-size: 0.95rem; margin-bottom: 32px; }
+    ul { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    a.link {
+      display: block;
+      padding: 16px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 600;
+      transition: transform .1s, border-color .2s;
+    }
+    a.link:hover { border-color: var(--accent); }
+    a.link:active { transform: scale(0.98); }
+    footer { margin-top: 40px; color: var(--sub); font-size: 0.8rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="avatar" aria-hidden="true">T</div>
+    <h1>Test User</h1>
+    <p class="bio">動作確認用のプロフィール・リンク集ページです。</p>
+    <ul>
+      <li><a class="link" href="https://github.com/" target="_blank" rel="noopener">GitHub</a></li>
+      <li><a class="link" href="https://x.com/" target="_blank" rel="noopener">X (Twitter)</a></li>
+      <li><a class="link" href="https://www.instagram.com/" target="_blank" rel="noopener">Instagram</a></li>
+      <li><a class="link" href="https://example.com/" target="_blank" rel="noopener">ブログ</a></li>
+      <li><a class="link" href="mailto:hello@example.com">お問い合わせ</a></li>
+    </ul>
+    <footer>&copy; <span id="year"></span> Test User</footer>
+  </main>
+  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+</body>
+</html>
