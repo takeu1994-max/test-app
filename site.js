@@ -65,11 +65,31 @@
 
   // ---------- 購入ボタン（/templates だけで使用） ----------
   // <div class="buy" data-buy="p1"></div>
-  //   ・枠の中に「見出し → 緑のボタン → 注記」の順で、ひとかたまりで表示します
+  //   ・枠の中に「見出し → 緑のボタン → 注記」の順で、ひとかたまりで表示します（メインの購入ボタン）
+  // <div class="buy" data-buy="p1" data-variant="slim"></div>
+  //   ・枠線だけの控えめな1行ボタン（ページ上部の入口用）
   document.querySelectorAll("[data-buy]").forEach(function (slot) {
     var p = PRODUCTS[slot.getAttribute("data-buy")];
     slot.innerHTML = "";
     if (!p) return;
+    if (slot.getAttribute("data-variant") === "slim") {
+      if (p.url) {
+        var s = el("a", "buy-slim");
+        s.href = p.url;
+        s.target = "_blank";
+        s.rel = "noopener";
+        s.appendChild(el("span", "buy-slim-label", "BOOTHで販売中"));
+        var go = el("span", "buy-slim-go", "販売ページを見る");
+        var ic = el("span", "", " ↗");
+        ic.setAttribute("aria-hidden", "true");
+        go.appendChild(ic);
+        s.appendChild(go);
+        slot.appendChild(s);
+      } else {
+        slot.appendChild(el("p", "buy-note", "BOOTHで近日販売予定です"));
+      }
+      return;
+    }
     var box = el("div", "buy-box");
     if (p.url) {
       box.appendChild(el("p", "buy-lead", "ご購入はBOOTH（外部サイト）から"));

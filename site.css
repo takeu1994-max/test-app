@@ -111,6 +111,17 @@ a.rel-card:hover, a.rel-card:focus-visible { border-color: var(--accent); }
   background: var(--card); color: var(--accent); font-weight: 800; font-size: .95rem; padding: 6px 12px; margin: 0;
 }
 .buy-note { font-size: .76rem; color: var(--sub); margin: 8px 0 0; line-height: 1.6; }
+/* 上部の控えめな入口（枠線だけの1行ボタン） */
+.buy[data-variant="slim"] { margin-top: 12px; }
+.buy a.buy-slim, .site-section .buy a.buy-slim {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 10px;
+  min-height: 48px; padding: 6px 14px; border: 1.5px solid var(--accent); border-radius: 12px;
+  background: var(--card); color: var(--accent); text-decoration: none; font-weight: 700; touch-action: manipulation;
+}
+.buy a.buy-slim:hover { background: var(--accent-soft); }
+.buy a.buy-slim:focus-visible { outline: 3px solid var(--text); outline-offset: 2px; }
+.buy-slim-label { font-size: .74rem; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 2px 10px; }
+.buy-slim-go { font-size: .9rem; }
 
 /* ---------- お問い合わせボタン（/about#contact） ---------- */
 .contact-slot { margin-top: 12px; }
@@ -141,5 +152,8 @@ a.rel-card:hover, a.rel-card:focus-visible { border-color: var(--accent); }
   .buy-main { font-size: .92rem; gap: 4px; }
   .buy-sub { font-size: .7rem; }
   .buy-lead { font-size: .8rem; }
+  .buy a.buy-slim, .site-section .buy a.buy-slim { padding: 6px 10px; gap: 4px 6px; }
+  .buy-slim-label { font-size: .68rem; padding: 2px 8px; }
+  .buy-slim-go { font-size: .84rem; }
   .site-header .brand { font-size: .86rem; }
 }
