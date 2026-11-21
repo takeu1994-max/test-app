@@ -62,6 +62,12 @@
   .badges li { font-size: .75rem; font-weight: 700; color: var(--accent); background: var(--accent-soft); border-radius: 999px; padding: 3px 10px; }
   h2 { font-size: 1rem; color: var(--sub); margin: 0 0 10px; }
   .tool-group + .tool-group { margin-top: 24px; }
+  .read-list { list-style: none; background: var(--card); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; }
+  .read-list li + li { border-top: 1px solid var(--line); }
+  .read-list a { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 52px; padding: 10px 16px; color: var(--text); text-decoration: none; font-weight: 700; font-size: .92rem; }
+  .read-list a:hover, .read-list a:focus-visible { color: var(--accent); }
+  .read-list .arrow { color: var(--sub); font-size: 1.2rem; }
+  .reads .more-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: 6px; color: var(--accent); font-weight: 700; font-size: .88rem; text-decoration: none; }
   .tool-group h2 { margin-bottom: 2px; }
   .group-lead { color: var(--sub); font-size: .82rem; margin-bottom: 10px; }
 
@@ -120,6 +126,14 @@
 </style>
 </head>
 <body>
+<header class="site-header">
+  <a class="brand" href="/tools"><img src="/favicon.svg" alt="" width="26" height="26"><span>請求・確定申告のかんたんツール</span></a>
+  <nav class="site-nav" aria-label="サイト内メニュー">
+    <a href="/tools" aria-current="page">ツール</a>
+    <a href="/guides">解説記事</a>
+    <a href="/templates">テンプレート</a>
+  </nav>
+</header>
 <div class="page">
   <header>
     <span class="eyebrow">フリーランス・副業・経理初心者の方へ</span>
@@ -140,7 +154,7 @@
       href・アイコン文字・タグ・名前・説明・ポイント・ボタン文言を書き換えるだけです。
       新しいグループが必要なら <section class="tool-group"> ごとコピーしてください。
       新しいツールのページには、上部に次の「戻るリンク」を入れてください：
-        <div class="topbar"><a class="back" href="/tools">← ツール一覧へ</a></div>
+        共通ヘッダー（<header class="site-header">…）とフッターは、既存のツールページからコピーしてください。
     -->
     <section class="tool-group" aria-labelledby="g-billing">
       <h2 id="g-billing">毎月の請求・報酬</h2>
@@ -216,30 +230,21 @@
       </ul>
     </section>
 
-    <aside class="promo-box" data-product="p1" data-lead="フリーランス・個人事業主向けの請求書・見積書テンプレートです。薄い黄色のセルに入力するだけで、消費税・源泉徴収・差引の請求金額を自動で計算します。"></aside>
+    <section class="tool-group" aria-labelledby="g-template">
+      <h2 id="g-template">有料テンプレート</h2>
+      <p class="group-lead">ツールとあわせて使うと、毎月の請求がさらにラクに</p>
+      <aside class="promo-box" data-product="p1" data-lead="フリーランス・個人事業主向け。入力するだけで、消費税・源泉徴収・差引の請求金額を自動で計算します。"></aside>
+    </section>
 
-    <!-- ===== 関連情報・おすすめ =====
-         カードは .grid の中に <a class="slot"> を足すだけで増やせます（1枚なら横いっぱい、2〜3枚なら横並び）。 -->
-    <section class="guide" aria-labelledby="guideTitle">
-      <h2 id="guideTitle">関連情報・おすすめ</h2>
-      <p class="lead">ツールとあわせて読みたい、やさしい解説記事です。</p>
-      <div class="grid">
-        <a class="slot" href="/guides/gensen-invoice" data-slot="hub-1">
-          <span class="tag">解説記事</span>
-          <b>はじめてでも分かる 源泉徴収と請求書の書き方</b>
-          <span class="d">請求書に書く基本項目と、源泉徴収の計算・税抜／税込・交通費の扱いを、はじめての方向けにまとめました。</span>
-        </a>
-        <a class="slot" href="/guides/kakutei-junbi" data-slot="hub-2">
-          <span class="tag">解説記事</span>
-          <b>副業・フリーランスの確定申告 準備ガイド</b>
-          <span class="d">確定申告が必要になりやすいケースや、そろえる書類と数字、収入・経費・源泉徴収の整理の進め方をまとめました。</span>
-        </a>
-        <!-- ▼ 追加用の枠（記事やPRを載せるときは、下のコメントを外して href と文言を書き換えてください）
-             ・解説記事： <a class="slot" href="/guides/（記事のURL）"><span class="tag">解説記事</span><b>タイトル</b><span class="d">ひとこと説明</span></a>
-             ・PR枠（アフィリエイト）： <a class="slot" href="https://（リンク先）" target="_blank" rel="sponsored noopener"><span class="tag">PR</span><b>サービス名</b><span class="d">ひとこと説明</span></a>
-             ※PR枠には必ず「PR」表記と rel="sponsored noopener" を付けてください。 -->
-      </div>
-      <a class="more-link" href="/guides">すべての解説記事を見る →</a>
+    <!-- ===== 解説記事（新しい順・2本まで。記事を追加したら差し替えてください） ===== -->
+    <section class="tool-group reads" aria-labelledby="g-reads">
+      <h2 id="g-reads">解説記事</h2>
+      <p class="group-lead">はじめてでも分かる、お金まわりの読み物</p>
+      <ul class="read-list">
+        <li><a href="/guides/kakutei-junbi"><span>副業・フリーランスの確定申告 準備ガイド</span><span class="arrow" aria-hidden="true">›</span></a></li>
+        <li><a href="/guides/gensen-invoice"><span>はじめてでも分かる 源泉徴収と請求書の書き方</span><span class="arrow" aria-hidden="true">›</span></a></li>
+      </ul>
+      <a class="more-link" href="/guides">記事一覧へ →</a>
     </section>
   </main>
 
@@ -247,6 +252,7 @@
   <ul class="site-links">
     <li><a href="/tools">ツール一覧</a></li>
     <li><a href="/guides">解説記事</a></li>
+    <li><a href="/templates">テンプレート</a></li>
     <li><a href="/about">このサイトについて</a></li>
     <li><a href="/about#privacy">プライバシーポリシー</a></li>
     <li><a href="/about#contact">お問い合わせ</a></li>

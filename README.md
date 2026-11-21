@@ -40,8 +40,9 @@
 - `about.html`：運営者情報・免責事項・プライバシーポリシー・お問い合わせ・国税庁リンク
 - `site.css`：使い方・FAQ、有料商品の案内枠、フッターリンクの共通スタイル
 - **`site.js`：販売ページのURLは先頭の `BOOTH_URL_P1`、お問い合わせフォームは `SITE.contactUrl` を書き換えれば全ページに反映**
-  - P1（請求書・見積書テンプレート）は紹介文と特徴を表示。URLが空のあいだは「BOOTHで近日販売予定です」と表示
-  - P2・P3 は `available: false` のため案内枠を非表示（準備ができたら `true` にする）
+  - BOOTHのURLを使うのは `/templates` の購入ボタンだけ。ツール画面・記事・ツール一覧の小さな案内は `/templates#p1` へ移動する
+  - URLが空のあいだは「近日販売予定」、入れると「BOOTHで販売中」＋購入ボタンに切り替わる
+  - P2・P3 は `available: false`（準備ができたら `true`、`/templates` に商品セクションを追加）
 - ページを追加したら `sitemap.xml` にも追記する
 
 ## 解説記事
@@ -49,3 +50,11 @@
 - 記事：`guides/gensen-invoice.html` → `/guides/gensen-invoice`、`guides/kakutei-junbi.html` → `/guides/kakutei-junbi`
 - 記事の見た目は共通の `article.css`
 - **記事を追加する手順**：①`guides/` に既存記事をコピーして新しいHTMLを作る（canonical・og:url・JSON-LDのURLも書き換え）②`guides.html` のリストのいちばん上に `<li>` を1つ追加 ③`sitemap.xml` に追記 ④必要ならツール一覧・申告チェッカーの「関連情報・おすすめ」に `<a class="slot">` を追加（コメントのひな形あり。PR枠は「PR」表記と `rel="sponsored noopener"` 必須）
+
+## 画面の役割（ツールと記事の分け方）
+- **共通ヘッダー**（全ページ）：サイト名＋タブ「ツール（/tools）」「解説記事（/guides）」「テンプレート（/templates）」。今いる場所のタブに `aria-current="page"`
+- **ツール画面**（/・/invoice-check・/income-memo・/checklist）：ツール本体 → 使い方・FAQ → 「あわせて使える」（関連記事1本＋有料テンプレートの小さな案内）→ フッター。ツール本体の中に宣伝や記事は置かない
+- **ツール一覧**（/tools）：ツール4つ → 有料テンプレート（小さな案内）→ 解説記事（見出し2本＋記事一覧へ）
+- **テンプレート**（/templates）：有料テンプレートの紹介・FAQ・購入ボタン
+- **解説記事**（/guides・/guides/*）：記事の中からツールとテンプレートへ案内
+- **フッター**：ツール一覧／解説記事／テンプレート／このサイトについて／プライバシーポリシー／お問い合わせ

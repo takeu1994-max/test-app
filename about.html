@@ -51,8 +51,6 @@
     padding: 12px 16px calc(32px + env(safe-area-inset-bottom));
   }
   .page { max-width: var(--page-max); margin: 0 auto; }
-  .back { display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; margin: 0 0 4px -4px; color: var(--sub); font-size: .85rem; font-weight: 700; text-decoration: none; }
-  .back:hover, .back:focus-visible { color: var(--accent); }
   h1 { font-size: 1.35rem; letter-spacing: .02em; }
   .lead { color: var(--sub); font-size: .9rem; margin-top: 4px; }
   .toc { list-style: none; display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
@@ -74,8 +72,15 @@
 </style>
 </head>
 <body>
+<header class="site-header">
+  <a class="brand" href="/tools"><img src="/favicon.svg" alt="" width="26" height="26"><span>請求・確定申告のかんたんツール</span></a>
+  <nav class="site-nav" aria-label="サイト内メニュー">
+    <a href="/tools">ツール</a>
+    <a href="/guides">解説記事</a>
+    <a href="/templates">テンプレート</a>
+  </nav>
+</header>
 <div class="page">
-  <a class="back" href="/tools">← ツール一覧へ</a>
   <h1>このサイトについて</h1>
   <p class="lead">「請求・確定申告のかんたんツール」は、フリーランス・副業・経理初心者の方が、請求や確定申告の準備をスマホやiPadで手軽に進めるための無料ツール集です。</p>
   <ul class="toc" aria-label="このページの目次">
@@ -138,6 +143,7 @@
     <ul class="site-links">
       <li><a href="/tools">ツール一覧</a></li>
       <li><a href="/guides">解説記事</a></li>
+      <li><a href="/templates">テンプレート</a></li>
       <li><a href="/about">このサイトについて</a></li>
       <li><a href="/about#privacy">プライバシーポリシー</a></li>
       <li><a href="/about#contact">お問い合わせ</a></li>

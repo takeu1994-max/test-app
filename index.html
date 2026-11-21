@@ -60,13 +60,6 @@
     min-height: 100vh;
     padding: 12px 16px calc(32px + env(safe-area-inset-bottom));
   }
-  /* ツール一覧へ戻るリンク */
-  .back {
-    display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; margin: 0 0 4px -4px;
-    color: var(--sub); font-size: .85rem; font-weight: 700; text-decoration: none; border-radius: 8px;
-  }
-  .back:hover, .back:focus-visible { color: var(--accent); }
-  .topbar { max-width: 960px; margin: 0 auto; }
   header { max-width: 960px; margin: 0 auto 16px; }
   h1 { font-size: 1.3rem; letter-spacing: .02em; }
   header p { color: var(--sub); font-size: .88rem; margin-top: 2px; }
@@ -189,7 +182,14 @@
 </style>
 </head>
 <body>
-<div class="topbar"><a class="back" href="/tools">← ツール一覧へ</a></div>
+<header class="site-header">
+  <a class="brand" href="/tools"><img src="/favicon.svg" alt="" width="26" height="26"><span>請求・確定申告のかんたんツール</span></a>
+  <nav class="site-nav" aria-label="サイト内メニュー">
+    <a href="/tools" aria-current="page">ツール</a>
+    <a href="/guides">解説記事</a>
+    <a href="/templates">テンプレート</a>
+  </nav>
+</header>
 <header>
   <h1>源泉徴収・請求額 逆算電卓</h1>
   <p>フリーランス・個人事業主の請求書づくりに。消費税・源泉徴収税・振込額を一発計算。</p>
@@ -292,7 +292,6 @@
       </div>
     </div>
 
-    <aside class="promo-box" data-product="p1" data-max-features="3" data-lead="この計算（消費税・源泉徴収・差引の請求額）が自動で入る請求書・見積書テンプレート。毎回の計算と書き写しの手間を減らせます。"></aside>
 
     <div class="card hist">
       <h2>計算履歴 <button type="button" id="clearHist">すべて削除</button></h2>
@@ -315,13 +314,21 @@
     <details><summary>源泉徴収は税抜・税込どちらの金額にかかりますか？</summary><div class="a">請求書などで消費税額がはっきり分けて書かれている場合は、税抜の報酬額を対象にできるとされています。分けていない場合は税込の金額が対象です。取引先の計算方法とあわせてご確認ください（「詳細設定」で切り替えられます）。</div></details>
     <details><summary>入力した金額は保存・送信されますか？</summary><div class="a">金額はどこにも送信されません。設定と、「履歴に保存」を押した計算だけが、この端末のブラウザ内に保存されます。</div></details>
   </div>
-  <p class="official">くわしい解説：<a href="/guides/gensen-invoice">はじめてでも分かる 源泉徴収と請求書の書き方</a>／<a href="/guides">解説記事の一覧</a></p>
+</section>
+
+<section class="site-section related" aria-labelledby="rel-title">
+  <h2 id="rel-title">あわせて使える</h2>
+  <div class="rel-grid">
+    <a class="rel-card" href="/guides/gensen-invoice"><small>解説記事</small><b>はじめてでも分かる 源泉徴収と請求書の書き方</b><span class="rel-desc">請求書に書く項目と、源泉徴収の計算・税抜／税込・交通費の扱いを解説。</span><span class="rel-foot"><span></span><span class="go">記事を読む →</span></span></a>
+    <aside class="promo-box" data-product="p1" data-lead="この計算（消費税・源泉徴収・差引の請求額）が自動で入る、請求書・見積書のテンプレートです。"></aside>
+  </div>
 </section>
 
 <footer>
   <ul class="site-links">
     <li><a href="/tools">ツール一覧</a></li>
     <li><a href="/guides">解説記事</a></li>
+    <li><a href="/templates">テンプレート</a></li>
     <li><a href="/about">このサイトについて</a></li>
     <li><a href="/about#privacy">プライバシーポリシー</a></li>
     <li><a href="/about#contact">お問い合わせ</a></li>

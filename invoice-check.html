@@ -61,12 +61,7 @@
   }
   a { color: var(--accent); }
   /* ツール一覧へ戻るリンク */
-  .back {
-    display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; margin: 0 0 4px -4px;
-    color: var(--sub); font-size: .85rem; font-weight: 700; text-decoration: none; border-radius: 8px;
-  }
-  .back:hover, .back:focus-visible { color: var(--accent); }
-  .topbar, header, .notice, .wrap, footer { max-width: 1040px; margin-left: auto; margin-right: auto; }
+  header, .notice, .wrap, footer { max-width: 1040px; margin-left: auto; margin-right: auto; }
   header { margin-bottom: 14px; }
   h1 { font-size: 1.3rem; letter-spacing: .02em; }
   header p { color: var(--sub); font-size: .88rem; margin-top: 2px; }
@@ -159,7 +154,14 @@
 </style>
 </head>
 <body>
-<div class="topbar"><a class="back" href="/tools">← ツール一覧へ</a></div>
+<header class="site-header">
+  <a class="brand" href="/tools"><img src="/favicon.svg" alt="" width="26" height="26"><span>請求・確定申告のかんたんツール</span></a>
+  <nav class="site-nav" aria-label="サイト内メニュー">
+    <a href="/tools" aria-current="page">ツール</a>
+    <a href="/guides">解説記事</a>
+    <a href="/templates">テンプレート</a>
+  </nav>
+</header>
 <header>
   <h1>請求書 記載漏れチェッカー</h1>
   <p>請求書・報酬の連絡・見積もりを送る前に、記載漏れや確認ポイントをタップでチェック。</p>
@@ -193,7 +195,6 @@
       <button type="button" class="btn plain wide" id="nextDoc">次の書類へ（チェックとメモを消去）</button>
       <p class="count" id="docCount" hidden></p>
     </div>
-    <div class="promo-box" data-product="p1" data-max-features="3" data-lead="この確認項目をはじめから反映した請求書・見積書テンプレート。消費税・源泉徴収の計算も自動です。"></div>
   </aside>
 
   <main class="card">
@@ -221,13 +222,21 @@
     <details><summary>自分がインボイス登録しているか分かりません。</summary><div class="a"><a href="https://www.invoice-kohyo.nta.go.jp/" target="_blank" rel="noopener">国税庁 適格請求書発行事業者公表サイト</a>で、登録番号などから確認できます。</div></details>
     <details><summary>チェックやメモはどこに保存されますか？</summary><div class="a">この端末のブラウザ内だけに保存され、外部には送信されません。別の端末とは共有されません。</div></details>
   </div>
-  <p class="official">くわしい解説：<a href="/guides/gensen-invoice">はじめてでも分かる 源泉徴収と請求書の書き方</a>／<a href="/guides">解説記事の一覧</a></p>
+</section>
+
+<section class="site-section related" aria-labelledby="rel-title">
+  <h2 id="rel-title">あわせて使える</h2>
+  <div class="rel-grid">
+    <a class="rel-card" href="/guides/gensen-invoice"><small>解説記事</small><b>はじめてでも分かる 源泉徴収と請求書の書き方</b><span class="rel-desc">請求書に書く項目と、源泉徴収の計算・税抜／税込・交通費の扱いを解説。</span><span class="rel-foot"><span></span><span class="go">記事を読む →</span></span></a>
+    <aside class="promo-box" data-product="p1" data-lead="このチェック項目をはじめから反映した、請求書・見積書のテンプレートです。"></aside>
+  </div>
 </section>
 
 <footer>
   <ul class="site-links">
     <li><a href="/tools">ツール一覧</a></li>
     <li><a href="/guides">解説記事</a></li>
+    <li><a href="/templates">テンプレート</a></li>
     <li><a href="/about">このサイトについて</a></li>
     <li><a href="/about#privacy">プライバシーポリシー</a></li>
     <li><a href="/about#contact">お問い合わせ</a></li>

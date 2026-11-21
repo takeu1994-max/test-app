@@ -1,9 +1,35 @@
 /* =====================================================
-   全ページ共通の部品（使い方・FAQ／有料商品の案内枠／フッターリンク）
-   色は各ページの :root にある --card --text --sub --line --accent --accent-soft を使います。
+   全ページ共通の部品
+   （共通ヘッダー／使い方・FAQ／「あわせて使える」／有料テンプレートの小さな案内／購入ボタン／フッターリンク）
+   色は各ページの :root にある --bg --card --text --sub --line --accent --accent-soft を使います。
    ===================================================== */
 
-/* 使い方・よくある質問 */
+/* ---------- 共通ヘッダー ---------- */
+.site-header {
+  max-width: var(--page-max, 1040px); margin: 0 auto 14px;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 4px 12px;
+}
+.site-header .brand {
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px;
+  color: var(--text); text-decoration: none; font-weight: 800; font-size: .92rem; letter-spacing: .02em;
+}
+.site-header .brand img { width: 26px; height: 26px; border-radius: 7px; flex: 0 0 auto; }
+.site-nav {
+  display: flex; gap: 4px; padding: 3px; margin: 0;
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+}
+.site-nav a {
+  display: flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px;
+  border-radius: 9px; color: var(--sub); font-weight: 700; font-size: .86rem; text-decoration: none; white-space: nowrap;
+}
+.site-nav a:hover { color: var(--accent); }
+.site-nav a[aria-current="page"] { background: var(--accent-soft); color: var(--accent); }
+@media (max-width: 520px) {
+  .site-nav { width: 100%; }
+  .site-nav a { flex: 1 1 0; padding: 0 6px; }
+}
+
+/* ---------- 使い方・よくある質問 ---------- */
 .site-section {
   max-width: var(--page-max, 1040px); margin: 16px auto 0;
   background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px;
@@ -27,37 +53,55 @@
 .faq .a a, .site-section a { color: var(--accent); font-weight: 600; }
 .official { margin-top: 12px; font-size: .8rem; color: var(--sub); }
 
-/* 有料商品の控えめな案内枠（中身は site.js が描画） */
-.promo-box {
-  display: block; margin-top: 16px; border: 1.5px dashed var(--line); border-radius: 14px;
-  padding: 14px; background: var(--card); color: var(--text);
+/* ---------- 「あわせて使える」（ツール画面の下部） ---------- */
+.rel-grid { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 640px) { .rel-grid { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); } }
+.site-section a.rel-card, a.rel-card {
+  display: flex; flex-direction: column; gap: 3px; min-height: 44px; height: 100%;
+  padding: 12px 14px; border: 1.5px solid var(--line); border-radius: 14px;
+  background: var(--card); color: var(--text); text-decoration: none; font-weight: 400;
 }
-.promo-box:empty { display: none; }
-.promo-box .promo-tag { display: inline-block; font-size: .7rem; font-weight: 700; color: var(--sub); background: var(--bg, #f3f5f4); border-radius: 6px; padding: 1px 6px; }
-.promo-box b { display: block; font-size: .95rem; margin-top: 6px; }
-.promo-box p { font-size: .82rem; color: var(--sub); margin: 4px 0 0; }
-.promo-box .promo-btn {
-  display: flex; align-items: center; justify-content: center; min-height: 44px; margin-top: 10px;
-  border-radius: 12px; background: var(--accent-soft); color: var(--accent); font-weight: 700; font-size: .88rem; text-decoration: none;
-}
-.promo-box .promo-btn.off { color: var(--sub); background: var(--bg, #f3f5f4); }
-.promo-box .promo-note { font-size: .72rem; color: var(--sub); margin-top: 6px; }
-.promo-box .promo-head { display: flex; flex-wrap: wrap; gap: 4px; }
-.promo-box .promo-format { color: var(--accent); background: var(--accent-soft); }
-.promo-box .promo-feats { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 4px; font-size: .8rem; color: var(--text); }
-.promo-box .promo-feats li { position: relative; padding-left: 1.2em; line-height: 1.55; }
-.promo-box .promo-feats li::before { content: "✓"; position: absolute; left: 0; color: var(--accent); font-weight: 800; }
-.promo-box .promo-soon {
-  margin-top: 10px; padding: 10px 12px; border-radius: 12px; background: var(--accent-soft); color: var(--accent);
-  font-size: .82rem; font-weight: 700; text-align: center;
-}
-.site-section > .promo-box:first-child { margin-top: 0; }
+a.rel-card:hover, a.rel-card:focus-visible { border-color: var(--accent); }
+.rel-card small { font-size: .72rem; font-weight: 700; color: var(--sub); }
+.rel-card b { font-size: .95rem; line-height: 1.45; color: var(--text); }
+.rel-card .rel-desc { font-size: .8rem; color: var(--sub); line-height: 1.6; }
+.rel-card .rel-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; margin-top: auto; padding-top: 6px; }
+.rel-card .go { font-size: .82rem; font-weight: 700; color: var(--accent); }
 
-/* フッターのサイト内リンク */
+/* ---------- 有料テンプレートの小さな案内（中身は site.js が描画） ---------- */
+.promo-box { display: block; }
+.promo-box:empty { display: none; }
+.promo-box.compact { margin: 0; padding: 0; border: 0; background: none; }
+.promo-box .promo-head { display: flex; flex-wrap: wrap; gap: 4px; }
+.promo-box .promo-tag {
+  display: inline-block; font-size: .7rem; font-weight: 700; color: var(--sub);
+  background: var(--bg, #f3f5f4); border-radius: 6px; padding: 1px 6px;
+}
+.promo-box .promo-format { color: var(--accent); background: var(--accent-soft); }
+.promo-box .status { font-size: .72rem; font-weight: 700; color: var(--sub); background: var(--bg, #f3f5f4); border-radius: 999px; padding: 2px 10px; }
+.promo-box .status.on { color: var(--accent); background: var(--accent-soft); }
+
+.cta + .promo-box.compact, p + .promo-box.compact { margin-top: 12px; }
+
+/* ---------- 購入ボタン（/templates） ---------- */
+.buy { margin-top: 14px; }
+.buy-btn {
+  display: flex; align-items: center; justify-content: center; min-height: 52px; border-radius: 14px;
+  background: var(--accent); color: #fff; font-weight: 800; font-size: 1rem; text-decoration: none;
+}
+@media (prefers-color-scheme: dark) { .buy-btn { color: #0e1312; } }
+.buy-soon {
+  display: flex; align-items: center; justify-content: center; min-height: 52px; border-radius: 14px;
+  background: var(--accent-soft); color: var(--accent); font-weight: 800; font-size: .95rem; text-align: center; padding: 6px 12px;
+}
+.buy-note { font-size: .76rem; color: var(--sub); margin-top: 6px; text-align: center; }
+
+/* ---------- フッターのサイト内リンク ---------- */
 .site-links { display: flex; flex-wrap: wrap; gap: 4px 14px; margin: 0 0 10px; padding: 0; list-style: none; }
+.site-links li { margin: 0; }
 .site-links a { display: inline-flex; align-items: center; min-height: 44px; color: var(--sub); font-weight: 700; font-size: .8rem; }
 
 @media (max-width: 380px) {
   .site-section { padding: 14px; }
+  .site-header .brand { font-size: .86rem; }
 }
-.site-links li { margin: 0; }

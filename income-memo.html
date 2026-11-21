@@ -63,12 +63,7 @@
     padding: 12px 16px calc(32px + env(safe-area-inset-bottom));
   }
   a { color: var(--accent); }
-  .back {
-    display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; margin: 0 0 4px -4px;
-    color: var(--sub); font-size: .85rem; font-weight: 700; text-decoration: none; border-radius: 8px;
-  }
-  .back:hover, .back:focus-visible { color: var(--accent); }
-  .topbar, header, .notice, .wrap, footer { max-width: 1040px; margin-left: auto; margin-right: auto; }
+  header, .notice, .wrap, footer { max-width: 1040px; margin-left: auto; margin-right: auto; }
   header { margin-bottom: 14px; }
   h1 { font-size: 1.3rem; letter-spacing: .02em; }
   header p { color: var(--sub); font-size: .88rem; margin-top: 2px; }
@@ -179,7 +174,14 @@
 </style>
 </head>
 <body>
-<div class="topbar"><a class="back" href="/tools">← ツール一覧へ</a></div>
+<header class="site-header">
+  <a class="brand" href="/tools"><img src="/favicon.svg" alt="" width="26" height="26"><span>請求・確定申告のかんたんツール</span></a>
+  <nav class="site-nav" aria-label="サイト内メニュー">
+    <a href="/tools" aria-current="page">ツール</a>
+    <a href="/guides">解説記事</a>
+    <a href="/templates">テンプレート</a>
+  </nav>
+</header>
 <header>
   <h1>年間収入・経費 振り返りメモ</h1>
   <p>月ごとの報酬・源泉徴収された金額・経費の目安をメモして、1年の合計や流れをざっくり確認。</p>
@@ -253,8 +255,6 @@
         <button type="button" class="btn primary" id="pasteApply">この内容で読み込む</button>
       </div>
     </div>
-
-    <div class="promo-box" data-product="p2" data-lead="iPhone・iPad・PCで同じデータを使いたい方、請求や入金状況まで管理したい方へ。Googleスプレッドシートなので、端末を変えても記録が残ります。"></div>
   </section>
 
   <section class="card">
@@ -277,13 +277,21 @@
     <details><summary>別の端末にデータを移したいです。</summary><div class="a">「ファイルに書き出す」または「テキストでコピー」でバックアップを作り、移したい端末でこのページを開いて「ファイルから読み込む」または「テキストを貼り付けて読み込む」を使ってください。読み込むと、その端末の記録はバックアップの内容に置き換わります。</div></details>
     <details><summary>合計や「報酬 − 経費」は、税額や所得の計算ですか？</summary><div class="a">いいえ。入力した数字を足し引きしただけの目安です。経費として扱えるかどうかなどの判断もしていません。確定申告については<a href="https://www.nta.go.jp/taxes/shiraberu/shinkoku/tokushu/index.htm" target="_blank" rel="noopener">国税庁 確定申告特集</a>や税理士等の専門家にご確認ください。</div></details>
   </div>
-  <p class="official">くわしい解説：<a href="/guides/kakutei-junbi">副業・フリーランスの確定申告 準備ガイド</a>／<a href="/guides">解説記事の一覧</a></p>
+</section>
+
+<section class="site-section related" aria-labelledby="rel-title">
+  <h2 id="rel-title">あわせて使える</h2>
+  <div class="rel-grid">
+    <a class="rel-card" href="/guides/kakutei-junbi"><small>解説記事</small><b>副業・フリーランスの確定申告 準備ガイド</b><span class="rel-desc">必要になりやすいケース、そろえる書類と数字、整理の進め方をまとめました。</span><span class="rel-foot"><span></span><span class="go">記事を読む →</span></span></a>
+    <aside class="promo-box" data-product="p1" data-lead="請求のたびに金額・源泉徴収税額がそろった控えを残せる、請求書・見積書のテンプレートです。このメモの入力もラクになります。"></aside>
+  </div>
 </section>
 
 <footer>
   <ul class="site-links">
     <li><a href="/tools">ツール一覧</a></li>
     <li><a href="/guides">解説記事</a></li>
+    <li><a href="/templates">テンプレート</a></li>
     <li><a href="/about">このサイトについて</a></li>
     <li><a href="/about#privacy">プライバシーポリシー</a></li>
     <li><a href="/about#contact">お問い合わせ</a></li>

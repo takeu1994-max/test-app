@@ -62,12 +62,6 @@
   a { color: var(--accent); }
 
   /* ツール一覧へ戻るリンク */
-  .back {
-    display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; margin: 0 0 4px -4px;
-    color: var(--sub); font-size: .85rem; font-weight: 700; text-decoration: none; border-radius: 8px;
-  }
-  .back:hover, .back:focus-visible { color: var(--accent); }
-  .topbar { max-width: 1040px; margin: 0 auto; }
 
   header { max-width: 1040px; margin: 0 auto 14px; }
   h1 { font-size: 1.3rem; letter-spacing: .02em; }
@@ -191,7 +185,14 @@
 </style>
 </head>
 <body>
-<div class="topbar"><a class="back" href="/tools">← ツール一覧へ</a></div>
+<header class="site-header">
+  <a class="brand" href="/tools"><img src="/favicon.svg" alt="" width="26" height="26"><span>請求・確定申告のかんたんツール</span></a>
+  <nav class="site-nav" aria-label="サイト内メニュー">
+    <a href="/tools" aria-current="page">ツール</a>
+    <a href="/guides">解説記事</a>
+    <a href="/templates">テンプレート</a>
+  </nav>
+</header>
 
 <header>
   <h1>確定申告 準備・抜け漏れチェッカー</h1>
@@ -225,7 +226,6 @@
         <button type="button" class="btn plain" id="resetAll">最初からやり直す</button>
       </div>
     </div>
-    <div class="promo-box" data-product="p3" data-lead="印刷して使えるチェックシートや、1年分の請求・入金を記録できる管理シートをまとめたセット。来年の準備もラクになります。"></div>
   </aside>
 
   <main class="card">
@@ -236,35 +236,6 @@
     <div id="list"></div>
   </main>
 </div>
-
-<!-- ===== 関連情報・おすすめ =====
-     カードは .grid の中に <a class="slot"> を足すだけで増やせます。 -->
-<section class="promo card" aria-labelledby="promoTitle">
-  <h2 id="promoTitle">関連情報・おすすめ</h2>
-  <p class="lead" style="margin-bottom:0">準備に役立つ解説記事とツール</p>
-  <div class="grid">
-    <a class="slot" href="/guides/kakutei-junbi" data-slot="0">
-      <span class="tag">解説記事</span>
-      <b>副業・フリーランスの確定申告 準備ガイド</b>
-      <span class="d">必要になりやすいケース、そろえる書類と数字、整理の進め方をまとめました。</span>
-    </a>
-    <a class="slot" href="/guides/gensen-invoice" data-slot="1">
-        <span class="tag">解説記事</span>
-        <b>はじめてでも分かる 源泉徴収と請求書の書き方</b>
-        <span class="d">源泉徴収のしくみと計算の考え方を解説。差し引かれた金額の確認にも役立ちます。</span>
-      </a>
-    <a class="slot" href="/" data-slot="2">
-      <span class="tag">姉妹ツール</span>
-      <b>源泉徴収・請求額 逆算電卓</b>
-      <span class="d">報酬から源泉徴収税・振込額を計算</span>
-    </a>
-    <!-- ▼ 追加用の枠（記事やPRを載せるときは、下のコメントを外して href と文言を書き換えてください）
-         ・解説記事： <a class="slot" href="/guides/（記事のURL）"><span class="tag">解説記事</span><b>タイトル</b><span class="d">ひとこと説明</span></a>
-         ・PR枠（アフィリエイト）： <a class="slot" href="https://（リンク先）" target="_blank" rel="sponsored noopener"><span class="tag">PR</span><b>サービス名</b><span class="d">ひとこと説明</span></a>
-         ※PR枠には必ず「PR」表記と rel="sponsored noopener" を付けてください。 -->
-  </div>
-  <a class="more-link" href="/guides">すべての解説記事を見る →</a>
-</section>
 
 <section class="site-section" aria-labelledby="howto-title">
   <h2 id="howto-title">使い方</h2>
@@ -279,13 +250,21 @@
     <details><summary>表示された項目は、全部必要ですか？</summary><div class="a">一般的な準備項目の目安です。状況によって不要なものや、ここにない書類が必要になる場合もあります。</div></details>
     <details><summary>申告の期限はいつですか？</summary><div class="a">年によって日付が変わることがあるため、<a href="https://www.nta.go.jp/taxes/shiraberu/shinkoku/tokushu/index.htm" target="_blank" rel="noopener">国税庁 確定申告特集</a>で最新の情報をご確認ください。</div></details>
   </div>
-  <p class="official">くわしい解説：<a href="/guides/kakutei-junbi">副業・フリーランスの確定申告 準備ガイド</a>／<a href="/guides">解説記事の一覧</a></p>
+</section>
+
+<section class="site-section related" aria-labelledby="rel-title">
+  <h2 id="rel-title">あわせて使える</h2>
+  <div class="rel-grid">
+    <a class="rel-card" href="/guides/kakutei-junbi"><small>解説記事</small><b>副業・フリーランスの確定申告 準備ガイド</b><span class="rel-desc">必要になりやすいケース、そろえる書類と数字、整理の進め方をまとめました。</span><span class="rel-foot"><span></span><span class="go">記事を読む →</span></span></a>
+    <aside class="promo-box" data-product="p1" data-lead="来年の準備をラクにするなら、請求のたびに控えを残すのが近道。そのための請求書・見積書テンプレートです。"></aside>
+  </div>
 </section>
 
 <footer>
   <ul class="site-links">
     <li><a href="/tools">ツール一覧</a></li>
     <li><a href="/guides">解説記事</a></li>
+    <li><a href="/templates">テンプレート</a></li>
     <li><a href="/about">このサイトについて</a></li>
     <li><a href="/about#privacy">プライバシーポリシー</a></li>
     <li><a href="/about#contact">お問い合わせ</a></li>

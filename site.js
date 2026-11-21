@@ -7,7 +7,9 @@
 
   // ▼▼▼ 販売ページのURL（BOOTHなど）── 公開したらここに貼り付けてください ▼▼▼
   //   例：var BOOTH_URL_P1 = "https://xxxx.booth.pm/items/1234567";
-  //   空 ("") のあいだは「BOOTHで近日販売予定です」と表示されます（リンクなし）。
+  //   ・このURLを使うのは /templates（テンプレート紹介ページ）の購入ボタンだけです。
+  //   ・ツール画面や記事の小さな案内は /templates に移動するので、URLが空でもリンク切れになりません。
+  //   ・空 ("") のあいだは「BOOTHで近日販売予定」と表示され、入れると「販売中」に変わります。
   var BOOTH_URL_P1 = "";
   // ▲▲▲ ここまで ▲▲▲
 
@@ -16,36 +18,19 @@
     contactUrl: ""
   };
 
-  // available: false の商品は、案内枠そのものを表示しません（準備ができたら true に）
+  // available: false の商品は、案内を表示しません（準備ができたら true に）
+  // page: ツール画面や記事の小さな案内から移動する先（テンプレート紹介ページ内の位置）
   var PRODUCTS = {
     p1: {
       available: true,
       name: "請求書・見積書テンプレート",
       format: "Googleスプレッドシート版",
-      desc: "フリーランス・個人事業主向け。薄い黄色のセルに入力するだけで、消費税・源泉徴収・差引の請求金額を自動で計算します。",
-      features: [
-        "請求書と見積書の2種類に、迷わないための「使い方」タブ付き",
-        "消費税あり／なし・敬称（御中／様）・源泉徴収の対象（税抜／税込）をプルダウンで切り替え",
-        "源泉徴収は100万円を超える場合の税率にも対応（このサイトの逆算電卓と同じ計算）",
-        "交通費などの立替金を報酬の明細と分けて記載。源泉徴収に含めるかも選べます",
-        "10%対象の金額と消費税額を表示（インボイスの記載を意識した構成）",
-        "コピーしてすぐ使える。スマホ・iPadのスプレッドシートアプリでも入力できます"
-      ],
-      note: "Googleアカウントが必要です。税務・記載内容の最終的な判断は、公式情報や専門家にご確認ください。",
+      short: "入力するだけで、消費税・源泉徴収・差引の請求金額を自動で計算します。",
+      page: "/templates#p1",
       url: BOOTH_URL_P1
     },
-    p2: {
-      available: false,
-      name: "請求・入金・年間収支 管理シート",
-      desc: "請求 → 入金 → 月別・年間の集計までつながる管理シート。",
-      url: ""
-    },
-    p3: {
-      available: false,
-      name: "フリーランス事務 スターターセット",
-      desc: "請求書テンプレート・管理シート・印刷用チェックシートのセット。",
-      url: ""
-    }
+    p2: { available: false, name: "請求・入金・年間収支 管理シート", page: "/templates", url: "" },
+    p3: { available: false, name: "フリーランス事務 スターターセット", page: "/templates", url: "" }
   };
 
   function el(tag, cls, text) {
@@ -55,37 +40,50 @@
     return e;
   }
 
-  // <aside class="promo-box" data-product="p1" data-lead="…" data-max-features="3"></aside> を描画
+  // ---------- 小さな案内カード ----------
+  // <aside class="promo-box compact" data-product="p1" data-lead="（ページに合わせた一文）"></aside>
+  //   → カード全体が /templates へのリンクになります（販売ページへ直接は飛びません）
   document.querySelectorAll(".promo-box[data-product]").forEach(function (box) {
     var p = PRODUCTS[box.getAttribute("data-product")];
     box.innerHTML = "";
     if (!p || !p.available) return; // 空のままなら CSS で非表示
-    var head = el("div", "promo-head");
-    head.appendChild(el("span", "promo-tag", "有料テンプレート"));
-    if (p.format) head.appendChild(el("span", "promo-tag promo-format", p.format));
-    box.appendChild(head);
-    box.appendChild(el("b", "", p.name));
-    box.appendChild(el("p", "", box.getAttribute("data-lead") || p.desc));
-    if (p.features && p.features.length) {
-      var max = parseInt(box.getAttribute("data-max-features"), 10) || p.features.length;
-      var ul = el("ul", "promo-feats");
-      p.features.slice(0, max).forEach(function (f) { ul.appendChild(el("li", "", f)); });
-      box.appendChild(ul);
-    }
+    box.classList.add("compact");
+    var a = el("a", "rel-card promo-link");
+    a.href = p.page;
+    var head = el("span", "promo-head");
+    head.appendChild(el("small", "promo-tag", "有料テンプレート"));
+    if (p.format) head.appendChild(el("small", "promo-tag promo-format", p.format));
+    a.appendChild(head);
+    a.appendChild(el("b", "", p.name));
+    a.appendChild(el("span", "rel-desc", box.getAttribute("data-lead") || p.short));
+    var foot = el("span", "rel-foot");
+    foot.appendChild(el("span", "status" + (p.url ? " on" : ""), p.url ? "BOOTHで販売中" : "近日販売予定"));
+    foot.appendChild(el("span", "go", "詳しく見る →"));
+    a.appendChild(foot);
+    box.appendChild(a);
+  });
+
+  // ---------- 購入ボタン（/templates だけで使用） ----------
+  // <div class="buy" data-buy="p1"></div>
+  document.querySelectorAll("[data-buy]").forEach(function (slot) {
+    var p = PRODUCTS[slot.getAttribute("data-buy")];
+    slot.innerHTML = "";
+    if (!p) return;
     if (p.url) {
-      var a = el("a", "promo-btn", "販売ページ（BOOTH）で詳しく見る");
+      var a = el("a", "buy-btn", "BOOTHの販売ページを見る");
       a.href = p.url;
       a.target = "_blank";
       a.rel = "noopener";
-      box.appendChild(a);
-      box.appendChild(el("p", "promo-note", "外部の販売サイトに移動します。" + (p.note ? p.note : "")));
+      slot.appendChild(a);
+      slot.appendChild(el("p", "buy-note", "外部サイト（BOOTH）に移動します。価格・お支払い方法・返品などの扱いは販売ページでご確認ください。"));
     } else {
-      box.appendChild(el("p", "promo-soon", "BOOTHで近日販売予定です"));
-      if (p.note) box.appendChild(el("p", "promo-note", p.note));
+      slot.appendChild(el("p", "buy-soon", "BOOTHで近日販売予定です"));
+      slot.appendChild(el("p", "buy-note", "販売を開始したら、このページに購入ボタンを表示します。"));
     }
   });
 
-  // <span data-contact></span> にお問い合わせ導線を描画
+  // ---------- お問い合わせ導線 ----------
+  // <span data-contact></span>
   document.querySelectorAll("[data-contact]").forEach(function (slot) {
     slot.innerHTML = "";
     if (SITE.contactUrl) {
