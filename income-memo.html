@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<meta name="description" content="月ごとの報酬と源泉徴収された金額の目安を入力して、年間合計や月ごとの流れをざっくり振り返れる無料メモツール。入力内容は端末内にのみ保存。">
+<title>年間収入 振り返りメモ</title>
+<style>
+  :root {
+    --bg: #f3f5f4;
+    --card: #ffffff;
+    --text: #18201e;
+    --sub: #5b6664;
+    --muted: #8a9593;
+    --line: #dfe5e3;
+    --grid: #eceff0;
+    --accent: #0f766e;
+    --accent-soft: #e3f3f1;
+    --warn-bg: #fff7e6;
+    --warn-line: #f2d49b;
+    --warn-text: #7a4b00;
+    --shadow: 0 1px 2px rgba(0,0,0,.05), 0 4px 16px rgba(0,0,0,.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1312;
+      --card: #18201e;
+      --text: #eef3f2;
+      --sub: #9aa8a5;
+      --muted: #6f7c7a;
+      --line: #2a3533;
+      --grid: #222c2a;
+      --accent: #2dd4bf;
+      --accent-soft: #123532;
+      --warn-bg: #2a2212;
+      --warn-line: #5c4a22;
+      --warn-text: #f5d08a;
+      --shadow: none;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.55; min-height: 100vh;
+    padding: 12px 16px calc(32px + env(safe-area-inset-bottom));
+  }
+  a { color: var(--accent); }
+  .back {
+    display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; margin: 0 0 4px -4px;
+    color: var(--sub); font-size: .85rem; font-weight: 700; text-decoration: none; border-radius: 8px;
+  }
+  .back:hover, .back:focus-visible { color: var(--accent); }
+  .topbar, header, .notice, .wrap, footer { max-width: 1040px; margin-left: auto; margin-right: auto; }
+  header { margin-bottom: 14px; }
+  h1 { font-size: 1.3rem; letter-spacing: .02em; }
+  header p { color: var(--sub); font-size: .88rem; margin-top: 2px; }
+  .notice { margin-bottom: 16px; background: var(--warn-bg); border: 1px solid var(--warn-line); color: var(--warn-text); border-radius: 12px; padding: 10px 14px; font-size: .84rem; }
+
+  .wrap { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 900px) {
+    .wrap { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+  }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; box-shadow: var(--shadow); }
+  .card + .card { margin-top: 16px; }
+  h2 { font-size: 1.05rem; margin-bottom: 4px; }
+  .lead { color: var(--sub); font-size: .82rem; margin-bottom: 12px; }
+
+  /* 年の切替 */
+  .year { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .year button {
+    width: 48px; height: 48px; border-radius: 12px; border: 1px solid var(--line); background: var(--card); color: var(--text);
+    font: inherit; font-size: 1.3rem; font-weight: 700; cursor: pointer; touch-action: manipulation;
+  }
+  .year button:active { transform: scale(.96); }
+  .year .y { font-size: 1.3rem; font-weight: 800; font-variant-numeric: tabular-nums; text-align: center; }
+  .year .y small { display: block; font-size: .72rem; color: var(--sub); font-weight: 600; }
+
+  .seg { display: flex; gap: 4px; background: var(--bg); border-radius: 12px; padding: 4px; margin-top: 14px; }
+  .seg button {
+    flex: 1 1 0; min-width: 0; min-height: 44px; border: 0; border-radius: 9px; background: transparent; color: var(--sub);
+    font: inherit; font-size: .88rem; font-weight: 700; cursor: pointer; touch-action: manipulation;
+  }
+  .seg button[aria-pressed="true"] { background: var(--card); color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,.12); }
+  .label { display: block; font-size: .85rem; font-weight: 700; color: var(--sub); margin-top: 14px; }
+
+  /* 合計 */
+  .hero { text-align: center; padding: 4px 0 12px; border-bottom: 1px dashed var(--line); }
+  .hero .cap { font-size: .82rem; color: var(--sub); font-weight: 700; }
+  .hero .val { font-size: clamp(1.6rem, 8vw, 2.2rem); font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; line-height: 1.2; overflow-wrap: anywhere; }
+  .hero .val small { font-size: 1rem; margin-left: 2px; }
+  table.sum { width: 100%; border-collapse: collapse; margin-top: 6px; font-variant-numeric: tabular-nums; }
+  table.sum th, table.sum td { padding: 10px 2px; border-bottom: 1px solid var(--line); font-size: .92rem; }
+  table.sum th { text-align: left; font-weight: 600; color: var(--sub); }
+  table.sum td { text-align: right; font-weight: 700; white-space: nowrap; }
+  table.sum tr:last-child th, table.sum tr:last-child td { border-bottom: 0; }
+  .warnline { margin-top: 10px; font-size: .8rem; color: var(--warn-text); background: var(--warn-bg); border: 1px solid var(--warn-line); border-radius: 10px; padding: 8px 10px; }
+
+  /* 月別グラフ（単一系列・報酬） */
+  .chart-title { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 2px 8px; margin-top: 16px; }
+  .chart-title b { font-size: .9rem; }
+  .chart-title span { font-size: .75rem; color: var(--sub); }
+  .chart { position: relative; margin-top: 8px; }
+  .plot { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 2px; height: 140px; align-items: end; border-bottom: 1px solid var(--line);
+    background: linear-gradient(to top, transparent calc(50% - .5px), var(--grid) calc(50% - .5px), var(--grid) calc(50% + .5px), transparent calc(50% + .5px)); }
+  .col { height: 100%; display: flex; align-items: flex-end; justify-content: center; border: 0; background: none; padding: 0; cursor: pointer; touch-action: manipulation; font: inherit; }
+  .col .b { width: min(70%, 22px); background: var(--accent); border-radius: 4px 4px 0 0; min-height: 0; transition: height .2s; }
+  .col.zero .b { height: 2px !important; background: var(--line); border-radius: 1px; }
+  .col[aria-pressed="true"] .b { box-shadow: 0 0 0 2px var(--card), 0 0 0 4px var(--accent); }
+  .col:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-radius: 4px; }
+  .xlab { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 2px; margin-top: 4px; font-size: .68rem; color: var(--muted); text-align: center; font-variant-numeric: tabular-nums; }
+  .tip { margin-top: 8px; min-height: 2.6em; font-size: .82rem; color: var(--sub); text-align: center; font-variant-numeric: tabular-nums; }
+  .tip b { color: var(--text); }
+
+  .actions { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; margin-top: 14px; }
+  .btn { min-height: 48px; border-radius: 12px; border: 0; font: inherit; font-weight: 700; font-size: .9rem; cursor: pointer; touch-action: manipulation; padding: 4px 8px; }
+  .btn.primary { background: var(--accent); color: #fff; }
+  @media (prefers-color-scheme: dark) { .btn.primary { color: #0e1312; } }
+  .btn.plain { background: var(--bg); color: var(--sub); }
+  .btn:active { transform: scale(.98); }
+  .calc-link { display: inline-flex; align-items: center; min-height: 44px; font-size: .85rem; font-weight: 700; margin-top: 4px; }
+
+  /* 月別入力 */
+  .months { list-style: none; display: grid; gap: 8px; }
+  .month { display: grid; grid-template-columns: 44px minmax(0, 1fr) minmax(0, 1fr); gap: 8px; align-items: end; padding: 8px 0; border-bottom: 1px solid var(--line); }
+  .month:last-child { border-bottom: 0; }
+  .month .m { font-weight: 800; font-size: 1rem; padding-bottom: 12px; font-variant-numeric: tabular-nums; }
+  .month label { display: block; font-size: .72rem; color: var(--sub); font-weight: 700; margin-bottom: 3px; }
+  .money { position: relative; }
+  .money input {
+    width: 100%; min-height: 46px; border: 2px solid var(--line); border-radius: 12px; background: var(--card); color: var(--text);
+    font: inherit; font-size: 1.05rem; font-weight: 700; text-align: right; padding: 6px 10px; font-variant-numeric: tabular-nums;
+  }
+  .money input:focus { outline: none; border-color: var(--accent); }
+  .month.over .wh input { border-color: var(--warn-line); }
+  .month .flag { grid-column: 2 / -1; font-size: .74rem; color: var(--warn-text); }
+
+  .toast {
+    position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(20px);
+    background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-size: .9rem; font-weight: 700;
+    opacity: 0; transition: .2s; pointer-events: none; z-index: 10; max-width: calc(100% - 32px); text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  footer { margin-top: 20px; color: var(--sub); font-size: .76rem; line-height: 1.7; }
+  footer .must { color: var(--text); font-weight: 700; font-size: .84rem; border-left: 3px solid var(--accent); padding: 4px 0 4px 10px; margin-bottom: 8px; }
+  footer li { margin-left: 1.2em; }
+  [hidden] { display: none !important; }
+  @media (max-width: 380px) {
+    body { padding-left: 12px; padding-right: 12px; }
+    .card { padding: 14px; }
+    /* 狭い画面では月名を上に出して入力欄を広くする */
+    .month { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4px 8px; }
+    .month .m { grid-column: 1 / -1; padding-bottom: 0; }
+    .month .flag { grid-column: 1 / -1; }
+    .actions { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back" href="./tools.html">← ツール一覧へ</a></div>
+<header>
+  <h1>年間収入 振り返りメモ</h1>
+  <p>月ごとの報酬と、源泉徴収された金額の目安をメモして、1年の合計や流れをざっくり確認。</p>
+</header>
+<p class="notice"><b>目安・振り返り用のメモです。</b>税額を確定したり、申告が必要かどうかを判断したりするものではありません。</p>
+
+<div class="wrap">
+  <section class="summary-col">
+    <div class="card">
+      <div class="year">
+        <button type="button" id="prevYear" aria-label="前の年">‹</button>
+        <div class="y"><span id="yearLabel">----</span>年<small>1月〜12月の記録</small></div>
+        <button type="button" id="nextYear" aria-label="次の年">›</button>
+      </div>
+      <span class="label">報酬の記録方法</span>
+      <div class="seg" role="group" aria-label="報酬の記録方法" id="basisSeg">
+        <button type="button" data-val="ex">税抜でメモ</button>
+        <button type="button" data-val="in">税込でメモ</button>
+      </div>
+      <p class="lead" style="margin:6px 0 0">どちらかに統一して入力すると振り返りやすくなります。</p>
+    </div>
+
+    <div class="card" aria-live="polite">
+      <div class="hero">
+        <div class="cap"><span id="yearCap"></span>年の報酬合計（<span id="basisCap">税抜</span>・目安）</div>
+        <div class="val"><span id="totInc">0</span><small>円</small></div>
+      </div>
+      <table class="sum">
+        <tbody>
+          <tr><th>源泉徴収された額の合計（目安）</th><td id="totWh">0円</td></tr>
+          <tr><th>差引（報酬 − 源泉徴収）</th><td id="totNet">0円</td></tr>
+          <tr><th>入力した月</th><td id="filled">0 / 12 か月</td></tr>
+          <tr><th>入力した月の報酬 平均</th><td id="avgInc">—</td></tr>
+          <tr><th>報酬がいちばん多い月</th><td id="maxMonth">—</td></tr>
+        </tbody>
+      </table>
+      <p class="warnline" id="overWarn" hidden></p>
+
+      <div class="chart-title"><b>月ごとの報酬</b><span id="scaleLabel"></span></div>
+      <div class="chart">
+        <div class="plot" id="plot" role="group" aria-label="月ごとの報酬の棒グラフ（棒をタップで金額を表示）"></div>
+        <div class="xlab" id="xlab" aria-hidden="true"></div>
+      </div>
+      <p class="tip" id="tip">棒をタップすると、その月の金額を表示します。</p>
+
+      <div class="actions">
+        <button type="button" class="btn primary" id="copyBtn">年間のまとめをコピー</button>
+        <button type="button" class="btn plain" id="clearYear">この年の入力を消去</button>
+      </div>
+      <a class="calc-link" href="./index.html">報酬から源泉徴収額の目安を出す（逆算電卓）→</a>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>月ごとのメモ</h2>
+    <p class="lead">支払調書・入金記録・請求書の控えなどを見ながら、分かる範囲で入力してください。空欄の月は0円として合計します。</p>
+    <ul class="months" id="months"></ul>
+  </section>
+</div>
+
+<footer>
+  <p class="must">最終的な税額や申告内容は、税務署・国税庁などの公式情報、または税理士等の専門家にご確認ください。</p>
+  <ul>
+    <li>このメモの合計は入力した数字を足し合わせただけの目安です。税額の計算や申告の要否の判断は行いません。</li>
+    <li>実際の報酬額・源泉徴収税額は、請求書の控え・入金記録・取引先からの書類などで確認してください。</li>
+    <li>入力内容はこの端末のブラウザ内（localStorage）にのみ保存され、外部には送信されません。ブラウザのデータ消去で消えることがあります。</li>
+  </ul>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function () {
+  "use strict";
+  var STORE_KEY = "income-memo-v1";
+  var MAX = 9999999999;
+  var MIN_YEAR = 2000, MAX_YEAR = 2100;
+
+  // 確定申告シーズン（1〜3月）は前年を初期表示
+  var now = new Date();
+  var defaultYear = now.getMonth() < 3 ? now.getFullYear() - 1 : now.getFullYear();
+  var data = { year: defaultYear, basis: "ex", years: {} };
+
+  var $ = function (id) { return document.getElementById(id); };
+  function toInt(str) {
+    var s = String(str == null ? "" : str).replace(/[０-９]/g, function (c) { return String.fromCharCode(c.charCodeAt(0) - 0xFEE0); })
+      .replace(/[^0-9]/g, "").replace(/^0+(?=\d)/, "");
+    if (!s) return 0;
+    var n = parseInt(s, 10);
+    return n > MAX ? MAX : n;
+  }
+  function fmt(n) { return n.toLocaleString("ja-JP"); }
+  function yen(n) { return fmt(n) + "円"; }
+  function cleanArr(a) {
+    var out = [];
+    for (var i = 0; i < 12; i++) {
+      var v = Array.isArray(a) ? a[i] : 0;
+      out.push(typeof v === "number" && isFinite(v) && v > 0 ? Math.min(MAX, Math.floor(v)) : 0);
+    }
+    return out;
+  }
+  function load() {
+    try {
+      var d = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
+      if (!d || typeof d !== "object") return;
+      if (d.basis === "ex" || d.basis === "in") data.basis = d.basis;
+      if (typeof d.year === "number" && d.year >= MIN_YEAR && d.year <= MAX_YEAR) data.year = Math.floor(d.year);
+      if (d.years && typeof d.years === "object") {
+        Object.keys(d.years).forEach(function (y) {
+          var yy = parseInt(y, 10), v = d.years[y];
+          if (yy >= MIN_YEAR && yy <= MAX_YEAR && v && typeof v === "object") data.years[yy] = { inc: cleanArr(v.inc), wh: cleanArr(v.wh) };
+        });
+      }
+    } catch (e) {}
+  }
+  function save() {
+    // 空の年は保存しない
+    Object.keys(data.years).forEach(function (y) {
+      var v = data.years[y];
+      if (v.inc.every(function (x) { return !x; }) && v.wh.every(function (x) { return !x; })) delete data.years[y];
+    });
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) {}
+  }
+  function cur() {
+    if (!data.years[data.year]) data.years[data.year] = { inc: cleanArr([]), wh: cleanArr([]) };
+    return data.years[data.year];
+  }
+
+  // ---------- 月別入力 ----------
+  var incEls = [], whEls = [], rowEls = [], flagEls = [];
+  function buildMonths() {
+    var ul = $("months");
+    for (var i = 0; i < 12; i++) {
+      var li = document.createElement("li"); li.className = "month";
+      var m = document.createElement("div"); m.className = "m"; m.textContent = (i + 1) + "月";
+      li.appendChild(m);
+      li.appendChild(field("inc" + i, "報酬", "inc", i));
+      li.appendChild(field("wh" + i, "源泉徴収された額", "wh", i));
+      var flag = document.createElement("div"); flag.className = "flag"; flag.hidden = true;
+      flag.textContent = "源泉徴収の額が報酬を上回っています。入力を確認してください。";
+      li.appendChild(flag);
+      ul.appendChild(li);
+      rowEls.push(li); flagEls.push(flag);
+    }
+  }
+  function field(id, label, kind, i) {
+    var wrap = document.createElement("div"); wrap.className = kind;
+    var lab = document.createElement("label"); lab.setAttribute("for", id); lab.textContent = label + "（円）";
+    var box = document.createElement("div"); box.className = "money";
+    var inp = document.createElement("input");
+    inp.id = id; inp.type = "text"; inp.setAttribute("inputmode", "numeric"); inp.autocomplete = "off"; inp.placeholder = "0";
+    inp.setAttribute("aria-label", (i + 1) + "月の" + label);
+    box.appendChild(inp);
+    wrap.appendChild(lab); wrap.appendChild(box);
+    (kind === "inc" ? incEls : whEls).push(inp);
+    inp.addEventListener("input", function () {
+      reformat(inp);
+      cur()[kind][i] = toInt(inp.value);
+      save(); renderSummary(); renderFlags();
+    });
+    inp.addEventListener("focus", function () { setTimeout(function () { try { inp.select(); } catch (e) {} }, 0); });
+    return wrap;
+  }
+  function reformat(el) {
+    var raw = el.value;
+    var caret = el.selectionStart == null ? raw.length : el.selectionStart;
+    var digitsBefore = raw.slice(0, caret).replace(/[^0-9０-９]/g, "").length;
+    var out = /[0-9０-９]/.test(raw) ? fmt(toInt(raw)) : "";
+    if (out === raw) return;
+    el.value = out;
+    var pos = 0, seen = 0;
+    while (pos < out.length && seen < digitsBefore) { if (/[0-9]/.test(out[pos])) seen++; pos++; }
+    try { el.setSelectionRange(pos, pos); } catch (e) {}
+  }
+  function fillInputs() {
+    var y = data.years[data.year] || { inc: cleanArr([]), wh: cleanArr([]) };
+    for (var i = 0; i < 12; i++) {
+      incEls[i].value = y.inc[i] ? fmt(y.inc[i]) : "";
+      whEls[i].value = y.wh[i] ? fmt(y.wh[i]) : "";
+    }
+  }
+  function renderFlags() {
+    var y = data.years[data.year] || { inc: cleanArr([]), wh: cleanArr([]) };
+    for (var i = 0; i < 12; i++) {
+      var over = y.wh[i] > y.inc[i];
+      flagEls[i].hidden = !over;
+      rowEls[i].classList.toggle("over", over);
+    }
+  }
+
+  // ---------- 合計・グラフ ----------
+  var selMonth = -1;
+  function stats() {
+    var y = data.years[data.year] || { inc: cleanArr([]), wh: cleanArr([]) };
+    var inc = 0, wh = 0, filled = 0, maxI = -1, over = [];
+    for (var i = 0; i < 12; i++) {
+      inc += y.inc[i]; wh += y.wh[i];
+      if (y.inc[i] || y.wh[i]) filled++;
+      if (y.inc[i] && (maxI < 0 || y.inc[i] > y.inc[maxI])) maxI = i;
+      if (y.wh[i] > y.inc[i]) over.push(i + 1);
+    }
+    var incMonths = y.inc.filter(function (x) { return x > 0; }).length;
+    return { y: y, inc: inc, wh: wh, net: inc - wh, filled: filled, maxI: maxI, avg: incMonths ? Math.round(inc / incMonths) : 0, incMonths: incMonths, over: over };
+  }
+  function renderSummary() {
+    var s = stats();
+    var basisName = data.basis === "in" ? "税込" : "税抜";
+    $("yearLabel").textContent = data.year;
+    $("yearCap").textContent = data.year;
+    $("basisCap").textContent = basisName;
+    $("totInc").textContent = fmt(s.inc);
+    $("totWh").textContent = yen(s.wh);
+    $("totNet").textContent = (s.net < 0 ? "−" : "") + yen(Math.abs(s.net));
+    $("filled").textContent = s.filled + " / 12 か月";
+    $("avgInc").textContent = s.incMonths ? yen(s.avg) : "—";
+    $("maxMonth").textContent = s.maxI >= 0 ? (s.maxI + 1) + "月（" + yen(s.y.inc[s.maxI]) + "）" : "—";
+    $("overWarn").hidden = !s.over.length;
+    $("overWarn").textContent = s.over.length ? s.over.join("・") + "月：源泉徴収の額が報酬を上回っています。入力を確認してください。" : "";
+    document.querySelectorAll("#basisSeg button").forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-val") === data.basis)); });
+    $("prevYear").disabled = data.year <= MIN_YEAR;
+    $("nextYear").disabled = data.year >= MAX_YEAR;
+    renderChart(s);
+  }
+  function niceMax(v) {
+    if (v <= 0) return 0;
+    var p = Math.pow(10, Math.floor(Math.log10(v)));
+    var steps = [1, 2, 2.5, 5, 10];
+    for (var i = 0; i < steps.length; i++) if (steps[i] * p >= v) return steps[i] * p;
+    return 10 * p;
+  }
+  function shortYen(n) {
+    if (n >= 100000000) return (n / 100000000).toLocaleString("ja-JP", { maximumFractionDigits: 1 }) + "億円";
+    if (n >= 10000) return (n / 10000).toLocaleString("ja-JP", { maximumFractionDigits: 1 }) + "万円";
+    return yen(n);
+  }
+  var colEls = [];
+  function buildChart() {
+    var plot = $("plot"), xlab = $("xlab");
+    for (var i = 0; i < 12; i++) {
+      (function (i) {
+        var c = document.createElement("button"); c.type = "button"; c.className = "col";
+        var b = document.createElement("span"); b.className = "b";
+        c.appendChild(b);
+        c.addEventListener("click", function () { selMonth = selMonth === i ? -1 : i; renderSummary(); });
+        c.addEventListener("mouseenter", function () { showTip(i); });
+        c.addEventListener("mouseleave", function () { showTip(selMonth); });
+        plot.appendChild(c); colEls.push(c);
+        var l = document.createElement("span"); l.textContent = i + 1; xlab.appendChild(l);
+      })(i);
+    }
+  }
+  function renderChart(s) {
+    var top = niceMax(Math.max.apply(null, s.y.inc));
+    $("scaleLabel").textContent = top ? "目盛り：中央線 " + shortYen(top / 2) + "／上端 " + shortYen(top) : "";
+    for (var i = 0; i < 12; i++) {
+      var v = s.y.inc[i], c = colEls[i];
+      c.classList.toggle("zero", !v);
+      c.firstChild.style.height = top && v ? Math.max(2, v / top * 100) + "%" : "2px";
+      c.setAttribute("aria-pressed", String(selMonth === i));
+      c.setAttribute("aria-label", (i + 1) + "月 報酬 " + yen(v) + "、源泉徴収 " + yen(s.y.wh[i]));
+    }
+    showTip(selMonth);
+  }
+  function showTip(i) {
+    var tip = $("tip");
+    if (i < 0) { tip.textContent = "棒をタップすると、その月の金額を表示します。"; return; }
+    var y = data.years[data.year] || { inc: cleanArr([]), wh: cleanArr([]) };
+    tip.innerHTML = "";
+    var b = document.createElement("b"); b.textContent = (i + 1) + "月";
+    tip.appendChild(b);
+    tip.appendChild(document.createTextNode("　報酬 " + yen(y.inc[i]) + "　／　源泉徴収 " + yen(y.wh[i])));
+  }
+
+  // ---------- 操作 ----------
+  function toast(msg) {
+    var el = $("toast"); el.textContent = msg; el.classList.add("show");
+    clearTimeout(toast._t); toast._t = setTimeout(function () { el.classList.remove("show"); }, 1600);
+  }
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+    return new Promise(function (resolve, reject) {
+      var ta = document.createElement("textarea"); ta.value = text; ta.setAttribute("readonly", "");
+      ta.style.position = "fixed"; ta.style.opacity = "0"; ta.style.fontSize = "16px";
+      document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, text.length);
+      var ok = false; try { ok = document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(ta); ok ? resolve() : reject();
+    });
+  }
+  function changeYear(d) {
+    var ny = data.year + d;
+    if (ny < MIN_YEAR || ny > MAX_YEAR) return;
+    data.year = ny; selMonth = -1;
+    save(); fillInputs(); renderFlags(); renderSummary();
+  }
+  $("prevYear").addEventListener("click", function () { changeYear(-1); });
+  $("nextYear").addEventListener("click", function () { changeYear(1); });
+  $("basisSeg").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    data.basis = b.getAttribute("data-val"); save(); renderSummary();
+  });
+  $("copyBtn").addEventListener("click", function () {
+    var s = stats();
+    if (!s.filled) { toast("まだ入力がありません"); return; }
+    var basisName = data.basis === "in" ? "税込" : "税抜";
+    var lines = ["【" + data.year + "年 収入の振り返りメモ（目安）】", "報酬は" + basisName + "で記録", ""];
+    for (var i = 0; i < 12; i++) lines.push((i + 1) + "月：報酬 " + yen(s.y.inc[i]) + " ／ 源泉徴収 " + yen(s.y.wh[i]));
+    lines.push("", "報酬合計：" + yen(s.inc), "源泉徴収 合計：" + yen(s.wh), "差引：" + (s.net < 0 ? "−" : "") + yen(Math.abs(s.net)));
+    lines.push("※入力値を合計した目安です。最終的な税額や申告内容は公式情報・専門家にご確認ください。");
+    copyText(lines.join("\n")).then(function () { toast("年間のまとめをコピーしました"); }, function () { toast("コピーできませんでした"); });
+  });
+  $("clearYear").addEventListener("click", function () {
+    if (!stats().filled) { toast("消去する入力はありません"); return; }
+    if (!confirm(data.year + "年の入力をすべて消去しますか？（ほかの年はそのまま）")) return;
+    delete data.years[data.year]; selMonth = -1;
+    save(); fillInputs(); renderFlags(); renderSummary();
+    toast(data.year + "年の入力を消去しました");
+  });
+
+  load();
+  buildMonths();
+  buildChart();
+  fillInputs();
+  renderFlags();
+  renderSummary();
+  window.__memo = { stats: stats, data: function () { return data; }, toInt: toInt, niceMax: niceMax };
+})();
+</script>
+</body>
+</html>

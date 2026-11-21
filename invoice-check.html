@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f766e">
+<meta name="description" content="請求書・報酬連絡・見積もりを送る前に、宛名・金額内訳・消費税や源泉徴収の扱い・支払期限・振込先などの記載漏れをタップで確認できる無料チェックツール。">
+<title>請求書 記載漏れチェッカー</title>
+<style>
+  :root {
+    --bg: #f3f5f4;
+    --card: #ffffff;
+    --text: #18201e;
+    --sub: #5b6664;
+    --line: #dfe5e3;
+    --accent: #0f766e;
+    --accent-soft: #e3f3f1;
+    --done-bg: #f1f7f6;
+    --warn-bg: #fff7e6;
+    --warn-line: #f2d49b;
+    --warn-text: #7a4b00;
+    --shadow: 0 1px 2px rgba(0,0,0,.05), 0 4px 16px rgba(0,0,0,.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0e1312;
+      --card: #18201e;
+      --text: #eef3f2;
+      --sub: #9aa8a5;
+      --line: #2a3533;
+      --accent: #2dd4bf;
+      --accent-soft: #123532;
+      --done-bg: #142825;
+      --warn-bg: #2a2212;
+      --warn-line: #5c4a22;
+      --warn-text: #f5d08a;
+      --shadow: none;
+    }
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.55; min-height: 100vh;
+    padding: 12px 16px calc(32px + env(safe-area-inset-bottom));
+  }
+  a { color: var(--accent); }
+  /* ツール一覧へ戻るリンク */
+  .back {
+    display: inline-flex; align-items: center; min-height: 44px; padding: 0 4px; margin: 0 0 4px -4px;
+    color: var(--sub); font-size: .85rem; font-weight: 700; text-decoration: none; border-radius: 8px;
+  }
+  .back:hover, .back:focus-visible { color: var(--accent); }
+  .topbar, header, .notice, .wrap, footer { max-width: 1040px; margin-left: auto; margin-right: auto; }
+  header { margin-bottom: 14px; }
+  h1 { font-size: 1.3rem; letter-spacing: .02em; }
+  header p { color: var(--sub); font-size: .88rem; margin-top: 2px; }
+  .notice { margin-bottom: 16px; background: var(--warn-bg); border: 1px solid var(--warn-line); color: var(--warn-text); border-radius: 12px; padding: 10px 14px; font-size: .84rem; }
+
+  .wrap { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+  @media (min-width: 900px) { .wrap { grid-template-columns: minmax(0, 380px) minmax(0, 1fr); align-items: start; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; box-shadow: var(--shadow); }
+  .card + .card { margin-top: 16px; }
+  h2 { font-size: 1.05rem; margin-bottom: 4px; }
+  .lead { color: var(--sub); font-size: .82rem; margin-bottom: 12px; }
+
+  .q + .q { margin-top: 16px; }
+  .q .label { display: block; font-size: .85rem; font-weight: 700; color: var(--sub); margin-bottom: 8px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .chips button {
+    flex: 1 1 auto; min-height: 44px; padding: 6px 12px; border-radius: 999px; border: 1.5px solid var(--line);
+    background: var(--card); color: var(--text); font: inherit; font-size: .9rem; font-weight: 600; cursor: pointer; touch-action: manipulation;
+  }
+  .chips button[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+  .chips button[aria-pressed="true"]::before { content: "✓ "; content: "✓ " / ""; }
+  .chips button:active { transform: scale(.97); }
+  .memo { width: 100%; min-height: 48px; border: 2px solid var(--line); border-radius: 12px; background: var(--card); color: var(--text); font: inherit; font-size: 1rem; padding: 8px 12px; }
+  .memo:focus { outline: none; border-color: var(--accent); }
+  .hint { font-size: .78rem; color: var(--sub); margin-top: 6px; }
+
+  .progress { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+  .progress .num { font-size: 1.9rem; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .progress .num small { font-size: 1rem; color: var(--sub); font-weight: 700; }
+  .progress .pct { font-weight: 800; color: var(--sub); font-variant-numeric: tabular-nums; }
+  .bar { height: 10px; border-radius: 999px; background: var(--bg); overflow: hidden; margin-top: 10px; }
+  .bar span { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 999px; transition: width .25s; }
+  .row2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; margin-top: 14px; }
+  .btn { min-height: 46px; border-radius: 12px; border: 0; font: inherit; font-weight: 700; font-size: .88rem; cursor: pointer; touch-action: manipulation; padding: 4px 8px; }
+  .btn.primary { background: var(--accent); color: #fff; }
+  .btn.ghost { background: var(--accent-soft); color: var(--accent); }
+  .btn.plain { background: var(--bg); color: var(--sub); }
+  .btn[aria-pressed="true"] { background: var(--accent); color: #fff; }
+  @media (prefers-color-scheme: dark) { .btn.primary, .btn[aria-pressed="true"] { color: #0e1312; } }
+  .btn:active { transform: scale(.98); }
+  .btn.wide { width: 100%; margin-top: 8px; }
+  .count { font-size: .8rem; color: var(--sub); margin-top: 10px; text-align: center; }
+
+  .mini {
+    position: sticky; top: 0; z-index: 5; margin: 0 -18px 12px; padding: 10px 18px;
+    background: var(--card); border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 10px;
+    font-size: .85rem; font-weight: 700; color: var(--sub);
+  }
+  .mini .bar { flex: 1 1 auto; margin-top: 0; height: 8px; }
+  .mini b { color: var(--accent); font-variant-numeric: tabular-nums; }
+  .group + .group { margin-top: 18px; }
+  .group h3 { font-size: .92rem; color: var(--sub); display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .group h3 span { font-variant-numeric: tabular-nums; }
+  .items { list-style: none; display: grid; gap: 8px; }
+  .item {
+    width: 100%; display: flex; gap: 12px; align-items: flex-start; text-align: left; min-height: 56px;
+    background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; padding: 12px 14px;
+    color: var(--text); font: inherit; cursor: pointer; touch-action: manipulation;
+  }
+  .item:active { transform: scale(.99); }
+  .item .box { flex: 0 0 26px; height: 26px; border-radius: 8px; border: 2px solid var(--line); margin-top: 1px; display: flex; align-items: center; justify-content: center; color: transparent; font-weight: 800; }
+  .item .t { display: block; font-weight: 700; font-size: .95rem; }
+  .item .d { display: block; color: var(--sub); font-size: .8rem; margin-top: 2px; }
+  .item .state { display: block; font-size: .72rem; font-weight: 700; color: var(--sub); margin-top: 4px; }
+  .item[aria-pressed="true"] { background: var(--done-bg); border-color: transparent; }
+  .item[aria-pressed="true"] .box { background: var(--accent); border-color: var(--accent); color: #fff; }
+  @media (prefers-color-scheme: dark) { .item[aria-pressed="true"] .box { color: #0e1312; } }
+  .item[aria-pressed="true"] .t { color: var(--sub); text-decoration: line-through; text-decoration-thickness: 1px; }
+  .item[aria-pressed="true"] .state { color: var(--accent); }
+  .item-link { display: inline-flex; align-items: center; min-height: 44px; margin: 2px 0 0 52px; font-size: .82rem; font-weight: 700; }
+  .all-done { text-align: center; padding: 14px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); font-weight: 700; margin-bottom: 14px; font-size: .9rem; }
+  .all-done .btn { margin-top: 10px; width: 100%; }
+
+  .toast {
+    position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translateX(-50%) translateY(20px);
+    background: var(--text); color: var(--bg); padding: 10px 18px; border-radius: 999px; font-size: .9rem; font-weight: 700;
+    opacity: 0; transition: .2s; pointer-events: none; z-index: 10; max-width: calc(100% - 32px); text-align: center;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  footer { margin-top: 20px; color: var(--sub); font-size: .76rem; line-height: 1.7; }
+  footer .must { color: var(--text); font-weight: 700; font-size: .84rem; border-left: 3px solid var(--accent); padding: 4px 0 4px 10px; margin-bottom: 8px; }
+  footer li { margin-left: 1.2em; }
+  [hidden] { display: none !important; }
+  @media (max-width: 380px) {
+    body { padding-left: 12px; padding-right: 12px; }
+    .card { padding: 14px; }
+    .mini { margin: 0 -14px 12px; padding: 10px 14px; }
+    .chips button { font-size: .85rem; padding: 6px 8px; }
+  }
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back" href="./tools.html">← ツール一覧へ</a></div>
+<header>
+  <h1>請求書 記載漏れチェッカー</h1>
+  <p>請求書・報酬の連絡・見積もりを送る前に、記載漏れや確認ポイントをタップでチェック。</p>
+</header>
+<p class="notice"><b>送付前の見直し用チェックリストです。</b>書類の正式な記載要件や、税務・契約上の判断を行うものではありません。</p>
+
+<div class="wrap">
+  <aside>
+    <div class="card">
+      <h2>1. 送る書類</h2>
+      <p class="lead">選んだ内容に合わせて確認項目が変わります。</p>
+      <div id="questions"></div>
+      <div class="q">
+        <label class="label" for="memo">メモ（取引先・案件名など／任意）</label>
+        <input id="memo" class="memo" type="text" maxlength="60" autocomplete="off" placeholder="例：○○社 11月分">
+        <p class="hint">この端末にだけ保存されます。</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>2. 確認の進み具合</h2>
+      <div class="progress" aria-live="polite">
+        <div class="num"><span id="doneNum">0</span><small> / <span id="totalNum">0</span> 件 確認済み</small></div>
+        <div class="pct" id="pct">0%</div>
+      </div>
+      <div class="bar" role="progressbar" aria-label="確認済みの割合" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="bar"><span id="barFill"></span></div>
+      <div class="row2">
+        <button type="button" class="btn ghost" id="onlyTodo" aria-pressed="false">未確認だけ表示</button>
+        <button type="button" class="btn ghost" id="copyTodo">未確認をコピー</button>
+      </div>
+      <button type="button" class="btn plain wide" id="nextDoc">次の書類へ（チェックとメモを消去）</button>
+      <p class="count" id="docCount" hidden></p>
+    </div>
+  </aside>
+
+  <main class="card">
+    <h2>3. 確認チェックリスト</h2>
+    <p class="lead">項目をタップすると「確認済み／未確認」が切り替わります。</p>
+    <div class="mini" aria-hidden="true"><span><b id="miniDone">0</b> / <span id="miniTotal">0</span> 件</span><div class="bar"><span id="miniFill"></span></div><span id="miniPct">0%</span></div>
+    <div id="allDone" class="all-done" hidden>
+      すべて確認済みです。送付前にもう一度全体を見直しましょう。
+      <button type="button" class="btn primary" id="nextDoc2">次の書類をチェックする</button>
+    </div>
+    <div id="list"></div>
+  </main>
+</div>
+
+<footer>
+  <p class="must">最終的な記載内容や税務・契約上の判断は、国税庁などの公式情報、取引先との契約内容、税理士等の専門家にご確認ください。</p>
+  <ul>
+    <li>本ツールは一般的な確認ポイントをまとめた目安です。取引先の指定様式や契約条件がある場合はそちらを優先してください。</li>
+    <li>選んだ内容・チェック・メモはこの端末のブラウザ内（localStorage）にのみ保存され、外部には送信されません。</li>
+  </ul>
+</footer>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(function () {
+  "use strict";
+  var STORE_KEY = "invoice-check-v1";
+
+  var QUESTIONS = [
+    { key: "doc", label: "書類の種類", def: "invoice", options: [["invoice", "請求書"], ["notice", "報酬・金額の連絡"], ["estimate", "見積もり"]] },
+    { key: "inv", label: "インボイス（適格請求書発行事業者）登録", def: "unknown", options: [["yes", "登録している"], ["no", "していない"], ["unknown", "わからない"]] },
+    { key: "wh", label: "源泉徴収の対象になりそう？", def: "unknown", options: [["yes", "なる"], ["no", "ならない"], ["unknown", "わからない"]] }
+  ];
+
+  function isDoc() { var a = arguments; return function (s) { for (var i = 0; i < a.length; i++) if (s.doc === a[i]) return true; return false; }; }
+  function all() { return true; }
+  var CALC = ["./index.html", "逆算電卓で金額を確認 →"];
+
+  var CATS = [["basic", "宛先・基本情報"], ["amount", "金額・内訳"], ["tax", "消費税・源泉徴収"], ["pay", "支払条件・振込先"], ["send", "送付前の最終確認"]];
+  var ITEMS = [
+    // 宛先・基本情報
+    { id: "b_to", cat: "basic", t: "宛名（会社名・部署・担当者名）の表記", d: "正式名称、「株式会社」の位置、敬称（御中／様）の付け方を確認。", when: all },
+    { id: "b_date", cat: "basic", t: "発行日", d: "取引先の締め日や指定日がある場合はそれに合わせる。", when: all },
+    { id: "b_no", cat: "basic", t: "書類番号（管理番号）", d: "問い合わせや入金照合のときに探しやすくなります。", when: isDoc("invoice", "estimate") },
+    { id: "b_me", cat: "basic", t: "自分の氏名・屋号・住所・連絡先", d: "取引先に登録している情報と食い違いがないか。", when: all },
+    { id: "b_title", cat: "basic", t: "件名・案件名で何の書類か分かる", d: "例：「○○制作費 ○月分」など。", when: all },
+    { id: "b_valid", cat: "basic", t: "見積もりの有効期限", d: "いつまでの条件かを明記。", when: isDoc("estimate") },
+
+    // 金額・内訳
+    { id: "a_lines", cat: "amount", t: "品目・作業内容・数量・単価", d: "何に対する金額かが第三者にも分かる書き方に。", when: all },
+    { id: "a_period", cat: "amount", t: "対象期間・納品日", d: "「○月分」「○月○日納品」など。", when: isDoc("invoice", "notice") },
+    { id: "a_scope", cat: "amount", t: "作業範囲・納期・修正回数などの前提", d: "金額の前提条件を書いておくと、後の食い違いを防げます。", when: isDoc("estimate") },
+    { id: "a_sum", cat: "amount", t: "小計・合計の計算をもう一度確認", d: "電卓や表計算で再計算。桁・カンマの位置も。", link: CALC, when: all },
+    { id: "a_dup", cat: "amount", t: "前回分との重複・請求漏れがない", d: "過去の請求書や作業記録と照らし合わせる。", when: isDoc("invoice") },
+    { id: "a_exp", cat: "amount", t: "交通費・立替経費を含める場合は内訳を分ける", d: "含めるかどうか・扱いは事前の取り決めを確認。", when: isDoc("invoice", "notice") },
+    { id: "a_taxmark", cat: "amount", t: "金額が税込か税抜かが一目で分かる", d: "「税抜」「税込」「消費税別」などの表記を確認。", when: all },
+
+    // 消費税・源泉徴収
+    { id: "t_ctax", cat: "tax", t: "消費税額（税率ごと）の記載", d: "税率と、その税率の対象金額・消費税額が分かるように。", when: all },
+    { id: "t_invno", cat: "tax", t: "登録番号（T＋13桁）の記載", d: "番号の打ち間違いがないか、国税庁の公表サイトの情報と照合。", when: function (s) { return s.doc !== "estimate" && s.inv === "yes"; } },
+    { id: "t_invreq", cat: "tax", t: "インボイスとして必要な記載事項がそろっているか", d: "必要な項目は国税庁の案内で確認。会計ソフトのテンプレートも参考に。", when: function (s) { return s.doc === "invoice" && s.inv === "yes"; } },
+    { id: "t_noinv", cat: "tax", t: "登録番号を記載しない場合の扱いを取引先と確認済み", d: "取引条件に関わることがあるため、事前に認識をそろえておく。", when: function (s) { return s.doc !== "notice" && s.inv === "no"; } },
+    { id: "t_invcheck", cat: "tax", t: "自分のインボイス登録状況を確認する", d: "国税庁の公表サイトで登録番号の有無を確認できます。", when: function (s) { return s.inv === "unknown"; } },
+    { id: "t_wh", cat: "tax", t: "源泉徴収税額と差引の支払額の記載", d: "取引先の計算方法（税抜額・税込額のどちらが対象か）と合っているか。", link: CALC, when: function (s) { return s.wh === "yes"; } },
+    { id: "t_whbase", cat: "tax", t: "源泉徴収の対象額が意図どおりか", d: "消費税額を区分して記載しているかで扱いが変わる場合があります。", when: function (s) { return s.wh === "yes" && s.doc !== "estimate"; } },
+    { id: "t_whask", cat: "tax", t: "源泉徴収の対象になるか取引先に確認する", d: "報酬の種類や取引先によって扱いが異なります。", when: function (s) { return s.wh === "unknown"; } },
+
+    // 支払条件・振込先
+    { id: "p_due", cat: "pay", t: "支払期限", d: "契約・発注書の支払条件（締め日・支払日）と合っているか。", when: isDoc("invoice") },
+    { id: "p_terms", cat: "pay", t: "支払条件（支払時期・方法）の案内", d: "「納品月末締め・翌月末払い」など。", when: isDoc("estimate", "notice") },
+    { id: "p_bank", cat: "pay", t: "振込先（銀行名・支店名・種別・口座番号・名義カナ）", d: "1文字ずつ確認。口座を変えた場合は取引先への連絡も。", when: isDoc("invoice", "notice") },
+    { id: "p_fee", cat: "pay", t: "振込手数料の負担（どちらが負担するか）", d: "取り決めがあればそれに合わせ、なければ確認しておく。", when: all },
+    { id: "p_contract", cat: "pay", t: "契約書・発注書の金額や条件と一致している", d: "単価・数量・支払条件を見比べる。", when: all },
+
+    // 送付前
+    { id: "s_typo", cat: "send", t: "誤字・数字の桁を最終確認", d: "特に金額・日付・口座番号は声に出して読み合わせると安心。", when: all },
+    { id: "s_pdf", cat: "send", t: "PDF化とファイル名（日付・取引先名・書類名）", d: "取引先の指定形式やファイル名ルールがあれば合わせる。", when: all },
+    { id: "s_dest", cat: "send", t: "送付先（担当者・メールアドレス）と送付方法", d: "宛先違い・添付漏れ・CCの要否を確認。郵送や請求書サービスの指定も。", when: all },
+    { id: "s_keep", cat: "send", t: "送った書類の控えを保存", d: "保存方法・期間は国税庁の案内などで確認。", when: all }
+  ];
+
+  var data = { s: {}, checked: {}, memo: "", onlyTodo: false, docs: 0 };
+  QUESTIONS.forEach(function (q) { data.s[q.key] = q.def; });
+  var $ = function (id) { return document.getElementById(id); };
+
+  function load() {
+    try {
+      var d = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
+      if (!d || typeof d !== "object") return;
+      if (d.s && typeof d.s === "object") QUESTIONS.forEach(function (q) {
+        var ok = q.options.some(function (o) { return o[0] === d.s[q.key]; });
+        if (ok) data.s[q.key] = d.s[q.key];
+      });
+      if (d.checked && typeof d.checked === "object") ITEMS.forEach(function (it) { if (d.checked[it.id] === true) data.checked[it.id] = true; });
+      if (typeof d.memo === "string") data.memo = d.memo.slice(0, 60);
+      data.onlyTodo = d.onlyTodo === true;
+      if (typeof d.docs === "number" && d.docs >= 0 && d.docs < 1e6) data.docs = Math.floor(d.docs);
+    } catch (e) {}
+  }
+  function save() { try { localStorage.setItem(STORE_KEY, JSON.stringify(data)); } catch (e) {} }
+
+  function renderQuestions() {
+    var root = $("questions");
+    root.innerHTML = "";
+    QUESTIONS.forEach(function (q) {
+      var wrap = document.createElement("div"); wrap.className = "q";
+      var lab = document.createElement("span"); lab.className = "label"; lab.id = "q_" + q.key; lab.textContent = q.label;
+      var chips = document.createElement("div"); chips.className = "chips";
+      chips.setAttribute("role", "group"); chips.setAttribute("aria-labelledby", lab.id);
+      q.options.forEach(function (o) {
+        var b = document.createElement("button"); b.type = "button"; b.textContent = o[1];
+        b.setAttribute("aria-pressed", String(data.s[q.key] === o[0]));
+        b.addEventListener("click", function () { data.s[q.key] = o[0]; save(); renderQuestions(); renderList(); });
+        chips.appendChild(b);
+      });
+      wrap.appendChild(lab); wrap.appendChild(chips); root.appendChild(wrap);
+    });
+  }
+
+  function visibleItems() { return ITEMS.filter(function (it) { return it.when(data.s); }); }
+  function renderList() {
+    var items = visibleItems(), list = $("list");
+    list.innerHTML = "";
+    var done = items.filter(function (it) { return data.checked[it.id]; }).length;
+    CATS.forEach(function (c) {
+      var inCat = items.filter(function (it) { return it.cat === c[0]; });
+      if (!inCat.length) return;
+      var dn = inCat.filter(function (it) { return data.checked[it.id]; }).length;
+      var shown = data.onlyTodo ? inCat.filter(function (it) { return !data.checked[it.id]; }) : inCat;
+      if (!shown.length) return;
+      var g = document.createElement("section"); g.className = "group";
+      var h = document.createElement("h3");
+      var hn = document.createElement("span"); hn.textContent = c[1];
+      var hc = document.createElement("span"); hc.textContent = dn + " / " + inCat.length;
+      h.appendChild(hn); h.appendChild(hc);
+      var ul = document.createElement("ul"); ul.className = "items";
+      shown.forEach(function (it) { ul.appendChild(itemEl(it)); });
+      g.appendChild(h); g.appendChild(ul); list.appendChild(g);
+    });
+    var total = items.length, pct = total ? Math.round(done / total * 100) : 0;
+    $("doneNum").textContent = done; $("totalNum").textContent = total; $("pct").textContent = pct + "%";
+    $("barFill").style.width = pct + "%"; $("bar").setAttribute("aria-valuenow", String(pct));
+    $("miniDone").textContent = done; $("miniTotal").textContent = total; $("miniPct").textContent = pct + "%"; $("miniFill").style.width = pct + "%";
+    $("allDone").hidden = !(total > 0 && done === total);
+    $("onlyTodo").setAttribute("aria-pressed", String(data.onlyTodo));
+    $("docCount").hidden = data.docs === 0;
+    $("docCount").textContent = "これまでにチェックした書類：" + data.docs + " 件";
+  }
+  function itemEl(it) {
+    var li = document.createElement("li");
+    var b = document.createElement("button"); b.type = "button"; b.className = "item";
+    b.setAttribute("aria-pressed", String(!!data.checked[it.id]));
+    var box = document.createElement("span"); box.className = "box"; box.textContent = "✓"; box.setAttribute("aria-hidden", "true");
+    var txt = document.createElement("span");
+    var t = document.createElement("span"); t.className = "t"; t.textContent = it.t;
+    var d = document.createElement("span"); d.className = "d"; d.textContent = it.d;
+    var st = document.createElement("span"); st.className = "state"; st.textContent = data.checked[it.id] ? "確認済み" : "未確認";
+    txt.appendChild(t); txt.appendChild(d); txt.appendChild(st);
+    b.appendChild(box); b.appendChild(txt);
+    b.addEventListener("click", function () {
+      if (data.checked[it.id]) delete data.checked[it.id]; else data.checked[it.id] = true;
+      save(); renderList();
+    });
+    li.appendChild(b);
+    if (it.link) { var a = document.createElement("a"); a.className = "item-link"; a.href = it.link[0]; a.textContent = it.link[1]; li.appendChild(a); }
+    return li;
+  }
+
+  function toast(msg) {
+    var el = $("toast"); el.textContent = msg; el.classList.add("show");
+    clearTimeout(toast._t); toast._t = setTimeout(function () { el.classList.remove("show"); }, 1600);
+  }
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) return navigator.clipboard.writeText(text);
+    return new Promise(function (resolve, reject) {
+      var ta = document.createElement("textarea"); ta.value = text; ta.setAttribute("readonly", "");
+      ta.style.position = "fixed"; ta.style.opacity = "0"; ta.style.fontSize = "16px";
+      document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, text.length);
+      var ok = false; try { ok = document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(ta); ok ? resolve() : reject();
+    });
+  }
+
+  var memoEl = $("memo");
+  memoEl.addEventListener("input", function () { data.memo = memoEl.value.slice(0, 60); save(); });
+  $("onlyTodo").addEventListener("click", function () { data.onlyTodo = !data.onlyTodo; save(); renderList(); });
+  $("copyTodo").addEventListener("click", function () {
+    var items = visibleItems().filter(function (it) { return !data.checked[it.id]; });
+    if (!items.length) { toast("未確認の項目はありません"); return; }
+    var docName = QUESTIONS[0].options.filter(function (o) { return o[0] === data.s.doc; })[0][1];
+    var lines = ["【" + docName + " 送付前の未確認リスト】" + (data.memo ? " " + data.memo : "")];
+    CATS.forEach(function (c) {
+      var inCat = items.filter(function (it) { return it.cat === c[0]; });
+      if (!inCat.length) return;
+      lines.push("", "■" + c[1]);
+      inCat.forEach(function (it) { lines.push("□ " + it.t); });
+    });
+    copyText(lines.join("\n")).then(function () { toast("未確認の " + items.length + " 件をコピーしました"); }, function () { toast("コピーできませんでした"); });
+  });
+  function nextDoc() {
+    var any = Object.keys(data.checked).length > 0 || data.memo;
+    if (!any) { toast("消去するチェックはありません"); return; }
+    if (!confirm("チェックとメモを消去して、次の書類のチェックを始めますか？（書類の種類などの選択はそのまま）")) return;
+    var finished = visibleItems().every(function (it) { return data.checked[it.id]; });
+    if (finished) data.docs += 1;
+    data.checked = {}; data.memo = ""; memoEl.value = "";
+    save(); renderList();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    toast("次の書類のチェックを始めましょう");
+  }
+  $("nextDoc").addEventListener("click", nextDoc);
+  $("nextDoc2").addEventListener("click", nextDoc);
+
+  load();
+  memoEl.value = data.memo;
+  renderQuestions();
+  renderList();
+  window.__inv = { ITEMS: ITEMS, QUESTIONS: QUESTIONS, visibleItems: visibleItems, data: function () { return data; } };
+})();
+</script>
+</body>
+</html>
