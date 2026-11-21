@@ -165,6 +165,7 @@
   .promo { max-width: 1040px; margin: 16px auto 0; }
   .promo .grid { display: grid; gap: 10px; grid-template-columns: minmax(0, 1fr); margin-top: 10px; }
   @media (min-width: 640px) { .promo .grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); } }
+  .promo .more-link { display: inline-flex; align-items: center; min-height: 44px; margin-top: 6px; color: var(--accent); font-weight: 700; font-size: .88rem; text-decoration: none; }
   .promo a.slot {
     display: block; border: 1.5px dashed var(--line); border-radius: 14px; padding: 14px; text-decoration: none; color: var(--text); min-height: 44px;
   }
@@ -242,6 +243,11 @@
   <h2 id="promoTitle">関連情報・おすすめ</h2>
   <p class="lead" style="margin-bottom:0">準備に役立つ解説記事とツール</p>
   <div class="grid">
+    <a class="slot" href="/guides/kakutei-junbi" data-slot="0">
+      <span class="tag">解説記事</span>
+      <b>副業・フリーランスの確定申告 準備ガイド</b>
+      <span class="d">必要になりやすいケース、そろえる書類と数字、整理の進め方をまとめました。</span>
+    </a>
     <a class="slot" href="/guides/gensen-invoice" data-slot="1">
         <span class="tag">解説記事</span>
         <b>はじめてでも分かる 源泉徴収と請求書の書き方</b>
@@ -257,6 +263,7 @@
          ・PR枠（アフィリエイト）： <a class="slot" href="https://（リンク先）" target="_blank" rel="sponsored noopener"><span class="tag">PR</span><b>サービス名</b><span class="d">ひとこと説明</span></a>
          ※PR枠には必ず「PR」表記と rel="sponsored noopener" を付けてください。 -->
   </div>
+  <a class="more-link" href="/guides">すべての解説記事を見る →</a>
 </section>
 
 <section class="site-section" aria-labelledby="howto-title">
@@ -272,11 +279,13 @@
     <details><summary>表示された項目は、全部必要ですか？</summary><div class="a">一般的な準備項目の目安です。状況によって不要なものや、ここにない書類が必要になる場合もあります。</div></details>
     <details><summary>申告の期限はいつですか？</summary><div class="a">年によって日付が変わることがあるため、<a href="https://www.nta.go.jp/taxes/shiraberu/shinkoku/tokushu/index.htm" target="_blank" rel="noopener">国税庁 確定申告特集</a>で最新の情報をご確認ください。</div></details>
   </div>
+  <p class="official">くわしい解説：<a href="/guides/kakutei-junbi">副業・フリーランスの確定申告 準備ガイド</a>／<a href="/guides">解説記事の一覧</a></p>
 </section>
 
 <footer>
   <ul class="site-links">
     <li><a href="/tools">ツール一覧</a></li>
+    <li><a href="/guides">解説記事</a></li>
     <li><a href="/about">このサイトについて</a></li>
     <li><a href="/about#privacy">プライバシーポリシー</a></li>
     <li><a href="/about#contact">お問い合わせ</a></li>

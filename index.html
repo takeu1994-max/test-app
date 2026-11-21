@@ -315,12 +315,13 @@
     <details><summary>源泉徴収は税抜・税込どちらの金額にかかりますか？</summary><div class="a">請求書などで消費税額がはっきり分けて書かれている場合は、税抜の報酬額を対象にできるとされています。分けていない場合は税込の金額が対象です。取引先の計算方法とあわせてご確認ください（「詳細設定」で切り替えられます）。</div></details>
     <details><summary>入力した金額は保存・送信されますか？</summary><div class="a">金額はどこにも送信されません。設定と、「履歴に保存」を押した計算だけが、この端末のブラウザ内に保存されます。</div></details>
   </div>
-  <p class="official">くわしい解説：<a href="/guides/gensen-invoice">はじめてでも分かる 源泉徴収と請求書の書き方</a></p>
+  <p class="official">くわしい解説：<a href="/guides/gensen-invoice">はじめてでも分かる 源泉徴収と請求書の書き方</a>／<a href="/guides">解説記事の一覧</a></p>
 </section>
 
 <footer>
   <ul class="site-links">
     <li><a href="/tools">ツール一覧</a></li>
+    <li><a href="/guides">解説記事</a></li>
     <li><a href="/about">このサイトについて</a></li>
     <li><a href="/about#privacy">プライバシーポリシー</a></li>
     <li><a href="/about#contact">お問い合わせ</a></li>
@@ -465,7 +466,7 @@
     $("rowTax").hidden = o.taxRate === 0;
     $("rGross").textContent = yen(r.gross);
     $("rowWh").hidden = !o.wh;
-    $("rWh").textContent = "−" + yen(r.wh);
+    $("rWh").textContent = (r.wh ? "−" : "") + yen(r.wh);
     $("rWhRate").textContent = o.wh
       ? (r.whTarget > 1000000 ? "10.21%＋超過分20.42%" : "10.21%") + "／対象 " + yen(r.whTarget)
       : "";

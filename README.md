@@ -44,6 +44,8 @@
   - P2・P3 は `available: false` のため案内枠を非表示（準備ができたら `true` にする）
 - ページを追加したら `sitemap.xml` にも追記する
 
-## 解説記事（`guides/`）
-- `guides/gensen-invoice.html` → `/guides/gensen-invoice`「はじめてでも分かる 源泉徴収と請求書の書き方」
-- 記事を追加するときは、同じフォルダにHTMLを作り、`sitemap.xml` に追記し、ツール一覧・申告チェッカーの「関連情報・おすすめ」に `<a class="slot">` を1枚足す（コメントにひな形あり。PR枠は「PR」表記と `rel="sponsored noopener"` 必須）
+## 解説記事
+- 一覧：`guides.html` → `/guides`（新しい順のカード。フッター・ツール一覧・申告チェッカーの関連情報・各ツールの「使い方」からリンク）
+- 記事：`guides/gensen-invoice.html` → `/guides/gensen-invoice`、`guides/kakutei-junbi.html` → `/guides/kakutei-junbi`
+- 記事の見た目は共通の `article.css`
+- **記事を追加する手順**：①`guides/` に既存記事をコピーして新しいHTMLを作る（canonical・og:url・JSON-LDのURLも書き換え）②`guides.html` のリストのいちばん上に `<li>` を1つ追加 ③`sitemap.xml` に追記 ④必要ならツール一覧・申告チェッカーの「関連情報・おすすめ」に `<a class="slot">` を追加（コメントのひな形あり。PR枠は「PR」表記と `rel="sponsored noopener"` 必須）
