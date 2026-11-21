@@ -86,6 +86,13 @@ footer .must { color: var(--text); font-weight: 700; font-size: .84rem; border-l
   table.t th, table.t td { padding: 6px 7px; }
 }
 
+/* メールなどの文例 */
+.mail {
+  margin-top: 8px; padding: 12px 14px; border: 1px solid var(--line); border-left: 4px solid var(--accent);
+  border-radius: 12px; background: var(--bg); white-space: pre-wrap; overflow-wrap: anywhere;
+  font-size: .86rem; line-height: 1.8;
+}
+
 /* 記事の前後リンク・記事一覧 */
 .next { margin-top: 16px; display: grid; gap: 8px; }
 .next a {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://test-app.kaikeilab.workers.dev/</loc><lastmod>2026-11-21</lastmod></url>
+  <url><loc>https://test-app.kaikeilab.workers.dev/</loc><lastmod>2026-11-22</lastmod></url>
   <url><loc>https://test-app.kaikeilab.workers.dev/tools</loc><lastmod>2026-11-22</lastmod></url>
   <url><loc>https://test-app.kaikeilab.workers.dev/invoice-check</loc><lastmod>2026-11-21</lastmod></url>
   <url><loc>https://test-app.kaikeilab.workers.dev/income-memo</loc><lastmod>2026-11-21</lastmod></url>
@@ -13,4 +13,5 @@
   <url><loc>https://test-app.kaikeilab.workers.dev/guides/tatekae-kotsuhi</loc><lastmod>2026-11-22</lastmod></url>
   <url><loc>https://test-app.kaikeilab.workers.dev/guides/menzei-invoice</loc><lastmod>2026-11-22</lastmod></url>
   <url><loc>https://test-app.kaikeilab.workers.dev/guides/mitsumori</loc><lastmod>2026-11-22</lastmod></url>
+  <url><loc>https://test-app.kaikeilab.workers.dev/guides/nyukin-check</loc><lastmod>2026-11-22</lastmod></url>
 </urlset>
